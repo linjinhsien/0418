@@ -7,14 +7,21 @@ Climber is a mobile-first web application designed to help climbers log their cl
 
 ## Technical Context
 
-**Language/Version**: TypeScript / HTML5  
-**Primary Dependencies**: React (for UI), Gemini API (via Google AI SDK), Chart.js (for dashboard)  
-**Storage**: LocalStorage (v1) / IndexedDB (for structured climb data)  
-**Testing**: Vitest / Testing Library  
-**Target Platform**: Mobile Web (Responsive)  
-**Project Type**: Web application  
-**Performance Goals**: Initial load < 3s, Smooth chart rendering  
-**Constraints**: Client-side only for v1, Offline-capable (PWA)  
+| Category | Decision | Reason |
+|---|---|---|
+| Language | TypeScript 5.x | Type safety for climb data models |
+| Bundler | **Vite 5** | Fast HMR, native ESM, minimal config |
+| UI Framework | **React 18** | Component model fits LogForm / Dashboard / AIBox |
+| State Management | **Zustand** | Lightweight, no boilerplate; fits single-user local-only v1 |
+| Routing | **React Router v6** | Simple 3-page app (Home / Dashboard / AI) |
+| Charts | **Chart.js 4** + react-chartjs-2 | Grade trend + success rate charts |
+| AI | **@google/generative-ai** (Gemini SDK) | Official SDK, streaming support |
+| Storage | **localStorage** (v1) | Simple JSON persistence; IndexedDB upgrade path noted |
+| Styling | CSS Modules + `src/styles/theme.css` | No runtime CSS-in-JS overhead |
+| Testing | **Vitest** + Testing Library | Co-located with Vite, fast unit tests |
+| Target Platform | Mobile Web (Responsive, 375px+) | Desktop secondary |
+| Constraints | Client-side only, PWA-ready | No backend for v1 |
+| Env Config | `NANOBANANA_API_KEY` via `~/.gemini/.env` (global) | Not stored in project `.env` |
 
 ## Constitution Check
 
