@@ -86,6 +86,8 @@ A climber wants personalized route suggestions based on their current level and 
 - **SC-002**: Dashboard loads and renders charts in under 2 seconds with up to 500 climb entries.
 - **SC-003**: Gemini route suggestions are returned in under 5 seconds under normal network conditions.
 - **SC-004**: 90% of users can complete their first climb log without needing help.
+- **SC-005**: UI color contrast meets WCAG 2.1 AA standards (minimum 4.5:1 for normal text).
+- **SC-006**: 100% of UI styling is moved to external CSS files (no inline styles) to ensure maintainability.
 
 ## Assumptions
 
