@@ -1,98 +1,85 @@
-# Feature Specification: Climber App
+# 功能規格：攀岩夥伴應用程式
 
-**Feature Branch**: `001-climber-app`  
-**Created**: 2026-04-14  
-**Status**: Draft  
-**Input**: User description: "A climbing companion app built with AI (Gemini) to help climbers track routes, progress, and get AI-powered route suggestions."
-
-## User Scenarios & Testing *(mandatory)*
-
-### User Story 1 - Log a Climb (Priority: P1)
-
-A climber finishes a session and wants to record what they climbed — route name, grade, result, and notes.
-
-**Why this priority**: Core value of the app. Without logging, nothing else works.
-
-**Independent Test**: Can be fully tested by opening the app, filling in a climb form, and verifying it appears in the climb history list.
-
-**Acceptance Scenarios**:
-
-1. **Given** the user is on the home screen, **When** they tap "Log Climb" and fill in route name, grade, date, and result, **Then** the climb is saved and appears in their history.
-2. **Given** a saved climb, **When** the user views their history, **Then** they see all logged climbs sorted by date.
-3. **Given** a form with missing required fields, **When** the user submits, **Then** validation errors are shown.
+**功能分支**：`001-climber-app`
+**建立日期**：2026-04-15T02:38:22+08:00
+**狀態**：進行中
+**概述**：攀岩記錄應用程式，協助攀岩者追蹤路線、進度，並取得路線建議。
 
 ---
 
-### User Story 2 - View Progress Dashboard (Priority: P2)
+## 使用者故事
 
-A climber wants to see how their grades and success rates have changed over time.
+### US1 — 記錄攀岩（P1）
 
-**Why this priority**: Motivates continued use and shows the value of logging.
+攀岩者完成訓練後，想記錄路線名稱、難度、結果與備註。
 
-**Independent Test**: Can be tested independently by seeding climb data and verifying charts render correctly with accurate stats.
+**驗收情境**：
+1. **Given** 首頁，**When** 點擊「記錄攀岩」並填寫必填欄位，**Then** 資料儲存並顯示於歷史清單。
+2. **Given** 已有記錄，**When** 檢視歷史，**Then** 依日期降冪排列。
+3. **Given** 必填欄位空白，**When** 送出表單，**Then** 顯示驗證錯誤訊息。
 
-**Acceptance Scenarios**:
+### US2 — 進度儀表板（P2）
 
-1. **Given** the user has logged at least 3 climbs, **When** they open the Dashboard, **Then** they see a chart of grades climbed over time.
-2. **Given** climb history exists, **When** viewing the dashboard, **Then** success rate per grade is displayed.
-3. **Given** no climbs logged, **When** viewing the dashboard, **Then** an empty state with a prompt to log a climb is shown.
+攀岩者想查看難度趨勢與成功率變化。
 
----
+1. **Given** 至少 3 筆記錄，**When** 開啟儀表板，**Then** 顯示難度趨勢圖表。
+2. **Given** 有歷史資料，**When** 檢視儀表板，**Then** 顯示各難度成功率。
+3. **Given** 無記錄，**When** 開啟儀表板，**Then** 顯示空狀態並引導記錄。
 
-### User Story 3 - AI Route Suggestions via Gemini (Priority: P3)
+### US3 — AI 路線建議（P3）
 
-A climber wants personalized route suggestions based on their current level and goals.
+攀岩者想根據自身程度取得個人化路線建議。
 
-**Why this priority**: Differentiating AI feature, but requires climb history to be useful.
-
-**Independent Test**: Can be tested by providing a mock skill level and style preference, then verifying Gemini returns relevant suggestions.
-
-**Acceptance Scenarios**:
-
-1. **Given** the user inputs their max grade and preferred style (bouldering/sport/trad), **When** they request suggestions, **Then** Gemini returns 3+ route recommendations with reasoning.
-2. **Given** a Gemini API error, **When** suggestions are requested, **Then** a friendly error message is shown with a retry option.
+**驗收情境**：
+1. **Given** 輸入最高難度與偏好風格（抱石／運動攀岩／傳統攀岩），**When** 請求建議，**Then** Gemini 回傳 3 條以上路線及理由。
+2. **Given** Gemini API 錯誤，**When** 請求建議，**Then** 顯示友善錯誤訊息與重試按鈕。
 
 ---
 
-### Edge Cases
+## 邊界情況
 
-- What happens when the user logs a climb with an unrecognized grade format?
-- How does the system handle offline usage (no internet for Gemini API)?
-- What if the user has no climb history when requesting AI suggestions?
+- 輸入不支援的難度格式時的處理方式
+- 離線狀態下（無法呼叫 Gemini API）的降級行為
+- 無歷史資料時請求 AI 建議的提示引導
 
-## Requirements *(mandatory)*
+---
 
-### Functional Requirements
+## 功能需求
 
-- **FR-001**: System MUST allow users to log a climb with: route name, grade, date, location, result (sent/attempt), and optional notes.
-- **FR-002**: System MUST display a history list of all logged climbs sorted by date descending.
-- **FR-003**: System MUST show a progress dashboard with grade trends and success rate charts.
-- **FR-004**: System MUST integrate with Gemini API to generate route suggestions based on user skill level and style.
-- **FR-005**: System MUST validate required fields before saving a climb entry.
-- **FR-006**: System MUST handle Gemini API failures gracefully with user-friendly error messages.
-- **FR-007**: System MUST persist climb data locally [NEEDS CLARIFICATION: local storage vs cloud database not specified].
+| ID | 需求 |
+|---|---|
+| FR-001 | 系統必須允許記錄：路線名稱、難度、日期、地點、結果（完攀／嘗試）、備註（選填） |
+| FR-002 | 系統必須依日期降冪顯示攀岩歷史清單 |
+| FR-003 | 系統必須顯示難度趨勢與成功率圖表 |
+| FR-004 | 系統必須整合 Gemini API 產生路線建議 |
+| FR-005 | 系統必須在儲存前驗證必填欄位 |
+| FR-006 | 系統必須優雅處理 Gemini API 失敗並顯示友善錯誤訊息 |
+| FR-007 | 系統必須將攀岩資料持久化於 localStorage（v1） |
 
-### Key Entities
+## 核心資料實體
 
-- **Climb**: route name, grade, date, location, result (sent/attempt), notes
-- **User Profile**: name, home gym, climbing since, goals
-- **AI Suggestion**: input grade + style → list of recommended routes with reasoning
+- **ClimbEntry**：路線名稱、難度、日期、地點、結果、備註
+- **UserProfile**：姓名、主場地、開始攀岩時間、目標
+- **AISuggestion**：輸入難度＋風格 → 建議路線清單（含理由）
 
-## Success Criteria *(mandatory)*
+---
 
-### Measurable Outcomes
+## 成功標準
 
-- **SC-001**: Users can log a climb in under 60 seconds.
-- **SC-002**: Dashboard loads and renders charts in under 2 seconds with up to 500 climb entries.
-- **SC-003**: Gemini route suggestions are returned in under 5 seconds under normal network conditions.
-- **SC-004**: 90% of users can complete their first climb log without needing help.
-- **SC-005**: UI color contrast meets WCAG 2.1 AA standards (minimum 4.5:1 for normal text).
-- **SC-006**: 100% of UI styling is moved to external CSS files (no inline styles) to ensure maintainability.
+| ID | 指標 |
+|---|---|
+| SC-001 | 使用者可在 60 秒內完成一筆攀岩記錄 |
+| SC-002 | 儀表板在 500 筆資料下 2 秒內載入完成 |
+| SC-003 | Gemini 建議在正常網路下 5 秒內回傳 |
+| SC-004 | 90% 使用者無需協助即可完成首次記錄 |
+| SC-005 | UI 色彩對比符合 WCAG 2.1 AA（正文最低 4.5:1） |
+| SC-006 | 所有樣式使用外部 CSS，禁止 inline style |
 
-## Assumptions
+---
 
-- Users have a stable internet connection for Gemini AI features.
-- Mobile-first design; desktop is secondary for v1.
-- Authentication/accounts are out of scope for v1 (single user, local data).
-- Gemini API key is provided via environment configuration.
-- Grade formats supported: V-scale (bouldering) and YDS (sport/trad) for v1.
+## 假設與限制
+
+- v1 為單一使用者，無帳號系統
+- 行動裝置優先（375px+），桌面為次要
+- Gemini API 金鑰透過全域環境變數（`~/.gemini/.env`）注入
+- 支援難度格式：V-scale（抱石）、YDS（運動攀岩／傳統攀岩）
