@@ -1,7 +1,7 @@
 :root {
   --primary-color: #2c3e50; /* Deep navy */
-  --secondary-color: #e67e22; /* Climbing rope orange */
-  --accent-color: #27ae60; /* Send green */
+  --secondary-color: #d35400; /* Darker orange for WCAG AA contrast */
+  --accent-color: #1e8449; /* Darker green for WCAG AA contrast */
   --background-color: #ecf0f1; /* Light chalky gray */
   --text-color: #34495e;
   --card-bg: #ffffff;
@@ -40,6 +40,35 @@ body {
   width: 100%;
 }
 
+.btn-accent {
+  background-color: var(--accent-color);
+}
+
 h1, h2 {
   color: var(--primary-color);
+}
+
+/* Reusable UI Components */
+.list-padded {
+  padding-left: 20px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.history-item-border {
+  border-bottom: 1px solid #eee;
+}
+
+.status-sent {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.status-projecting {
+  color: var(--secondary-color);
+  font-weight: bold;
 }

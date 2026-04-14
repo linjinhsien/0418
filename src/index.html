@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>🧗 Climber</h1>
+      <h1>演 Climber</h1>
       <p>Keep tracking, keep climbing.</p>
     </header>
 
@@ -22,22 +22,22 @@
     <div class="card">
       <h2>Gemini AI Suggestions</h2>
       <p>Based on your current progress (V4 max), we suggest:</p>
-      <ul style="padding-left: 20px;">
+      <ul class="list-padded">
         <li>Try "The Traverse" (V5) - Great for building endurance.</li>
         <li>Focus on crimp strength for the next session.</li>
       </ul>
-      <button class="btn" style="background-color: var(--accent-color);">Get New Suggestion</button>
+      <button class="btn btn-accent">Get New Suggestion</button>
     </div>
 
     <div class="card">
       <h2>Recent History</h2>
-      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 8px 0;">
+      <div class="history-item history-item-border">
         <span>V4 - Golden Wall</span>
-        <span style="color: var(--accent-color);">Sent!</span>
+        <span class="status-sent">Sent!</span>
       </div>
-      <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+      <div class="history-item">
         <span>V5 - Overhang</span>
-        <span style="color: var(--secondary-color);">Projecting</span>
+        <span class="status-projecting">Projecting</span>
       </div>
     </div>
   </div>
