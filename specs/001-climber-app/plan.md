@@ -1,75 +1,110 @@
-# 實作計畫：攀岩夥伴應用程式
+# 實作計畫：Climber 攀岩夥伴 App
 
-**分支**：`001-climber-app` | **日期**：2026-04-15T02:38:22+08:00 | **規格**：[specs/001-climber-app/spec.md]
+**Branch**: `001-climber-app` | **Date**: 2026-04-15 | **Spec**: `/specs/001-climber-app/spec.md`
+**Input**: 來自 `/specs/001-climber-app/spec.md` 的功能規格
 
-## 摘要
+## Summary
 
-行動裝置優先的攀岩記錄 Web 應用程式，核心功能為攀岩記錄、進度儀表板、Gemini AI 路線建議。
+建立一個以行動裝置優先的攀岩紀錄 Web App：先完成可靠資料紀錄與還原，再完成進度視覺化，最後疊加 Gemini AI 建議，以確保每一階段皆可獨立驗證與交付（符合 Speckit 分階段原則）。
 
----
+## Technical Context
 
-## 技術棧
+**Language/Version**: TypeScript 5.x
+**Primary Dependencies**: React 18、Vite 5、React Router v6、Zustand、Chart.js 4、`@google/generative-ai`
+**Storage**: localStorage（JSON，v1 單使用者）
+**Testing**: Vitest + Testing Library
+**Target Platform**: Mobile-first 現代瀏覽器（Chromium/Safari/Firefox）
+**Project Type**: 前端 SPA 應用
+**Performance Goals**: 500 筆資料下儀表板 < 2 秒；成功 AI 請求目標 < 5 秒
+**Constraints**: 無後端（v1）；非 AI 功能需可離線使用；核心流程需符合 WCAG 2.1 AA
+**Scale/Scope**: 3 條主要 user stories（紀錄 / 儀表板 / AI 建議）
 
-| 類別 | 選型 | 說明 |
-|---|---|---|
-| 語言 | TypeScript 5.x | 資料模型型別安全 |
-| 建構工具 | **Vite 5** | 快速 HMR、原生 ESM |
-| UI 框架 | **React 18** | 元件化（LogForm / Dashboard / AIBox） |
-| 狀態管理 | **Zustand** | 輕量、無樣板程式碼，適合 v1 單使用者 |
-| 路由 | **React Router v6** | 三頁路由（首頁 / 儀表板 / AI） |
-| 圖表 | **Chart.js 4** + react-chartjs-2 | 難度趨勢與成功率圖表 |
-| AI | **@google/generative-ai** | Gemini 官方 SDK |
-| 儲存 | **localStorage**（v1） | 簡易 JSON 持久化 |
-| 樣式 | CSS Modules + `src/styles/theme.css` | 無執行期 CSS-in-JS |
-| 測試 | **Vitest** + Testing Library | 與 Vite 整合，快速單元測試 |
-| 環境變數 | `~/.gemini/.env`（全域） | API 金鑰不存於專案 `.env` |
+## Constitution Check
 
----
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-## 憲章檢核
+- [x] **價值優先**：功能直接對應攀岩者核心任務（記錄、分析、建議）。
+- [x] **資料完整性**：先定義驗證/持久化，再開發圖表與 AI。
+- [x] **AI 增強而非阻斷**：AI 不可成為主流程單點失效。
+- [x] **可測試切片**：每個 User Story 具獨立驗收條件。
+- [x] **品質門檻**：納入可衡量效能與可及性目標。
 
-- [x] **AI 優先**：Gemini 整合為核心功能（US3）
-- [x] **簡潔 UX**：行動裝置優先響應式設計
-- [x] **資料完整性**：ClimbEntry 結構定義，必填欄位驗證
-- [x] **可測試性**：Vitest 單元測試，各 US 可獨立測試
+## Project Structure
 
----
-
-## 專案結構
+### Documentation (this feature)
 
 ```text
 specs/001-climber-app/
-├── spec.md         # 功能規格
-├── plan.md         # 本文件
-├── tasks.md        # 實作任務清單
-├── data-model.md   # ClimbEntry / UserProfile 型別定義
-└── research.md     # Gemini API 整合研究
-
-src/
-├── components/     # LogForm、ClimbHistory、Dashboard、AIBox
-├── services/       # gemini.ts、storage.ts
-├── models/         # TypeScript 介面
-├── styles/         # theme.css、元件樣式
-└── main.tsx        # 應用程式進入點
+├── spec.md
+├── plan.md
+├── tasks.md
+├── research.md
+├── data-model.md
+├── quickstart.md
+└── contracts/
 ```
 
----
+### Source Code (repository root)
 
-## 實作階段
+```text
+src/
+├── components/
+│   ├── LogForm/
+│   ├── ClimbHistory/
+│   ├── Dashboard/
+│   └── AISuggestions/
+├── services/
+│   ├── storage.ts
+│   └── gemini.ts
+├── stores/
+│   └── climbs.ts
+├── models/
+│   └── climb.ts
+├── routes/
+│   └── index.tsx
+└── styles/
+    └── theme.css
 
-### Phase 0 — 研究
-- Gemini API 提示詞工程（攀岩路線建議）
-- localStorage 資料結構設計
+tests/
+├── unit/
+├── integration/
+└── contract/
+```
 
-### Phase 1 — 資料模型與合約
-- 定義 `ClimbEntry`、`UserProfile` TypeScript 介面
-- 定義 Gemini 提示詞樣板與回應格式
+**Structure Decision**: 採單一 SPA 專案結構，降低 v1 複雜度並保留後續擴充彈性。
 
-### Phase 2 — 核心功能（US1）
-- `StorageService`、`LogForm` 元件、`ClimbHistory` 元件
+## Implementation Phases
 
-### Phase 3 — 儀表板（US2）
-- `Dashboard` 元件、Chart.js 整合、空狀態 UI
+### Phase 0 — 研究與風險收斂
 
-### Phase 4 — AI 建議（US3）
-- `GeminiService`、`AIBox` 元件、錯誤處理與重試
+- 確認 V-scale/YDS 格式規則與錯誤訊息策略。
+- 設計 Gemini prompt 與輸出結構，避免 UI 解析不穩定。
+- 驗證 localStorage 容量/錯誤行為與回復策略。
+
+### Phase 1 — 資料模型與契約
+
+- 定義 `ClimbEntry`、`UserProfile`、`ProgressSnapshot`、`AISuggestion` 型別。
+- 建立資料驗證與序列化邊界，避免髒資料流入下游。
+- 定義 AI 服務錯誤分類（可重試/不可重試）。
+
+### Phase 2 — 核心流程（P1）
+
+- 實作 `LogForm`（驗證、可及性、錯誤回饋）。
+- 實作 `ClimbHistory`（穩定排序、顯示一致性）。
+- 串接 store + storage 完成資料持久化與還原。
+
+### Phase 3 — 進度儀表板（P2）
+
+- 實作趨勢與成功率資料轉換。
+- 實作圖表與 empty/loading/error 狀態。
+- 補齊統計計算與渲染測試。
+
+### Phase 4 — AI 建議（P3）
+
+- 實作 Gemini service 與建議顯示 UI。
+- 加入 API 失敗重試、提示文案與 fallback 流程。
+- 強化無歷史資料時的引導與預設策略。
+
+## Complexity Tracking
+
+目前無違反憲章原則之必要例外。
