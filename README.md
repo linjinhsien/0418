@@ -94,3 +94,36 @@ A climber wants personalized route suggestions based on their current level and 
 - Authentication/accounts are out of scope for v1 (single user, local data).
 - Gemini API key is provided via environment configuration.
 - Grade formats supported: V-scale (bouldering) and YDS (sport/trad) for v1.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Expo CLI: `npm install -g expo-cli`
+- [Expo Go](https://expo.dev/go) app on your phone (easiest), or iOS Simulator / Android Emulator
+
+### Run
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Set your Gemini API key
+echo "EXPO_PUBLIC_GEMINI_API_KEY=your_key_here" > .env.local
+
+# 3. Start the dev server
+npx expo start
+```
+
+Then press `i` (iOS), `a` (Android), or scan the QR code with Expo Go.
+
+Get a Gemini API key at [aistudio.google.com](https://aistudio.google.com).
+
+### Tests
+
+```bash
+npx jest
+```
