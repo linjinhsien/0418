@@ -1,4 +1,3 @@
-import NetInfo from '@react-native-community/netinfo';
 import { SuggestionError } from '@/shared/errorTypes';
 import { climbsService } from '@/climbs/climbsService';
 import { GeminiClient } from './geminiClient';
@@ -24,8 +23,8 @@ export interface SuggestionRequest {
 export function createSuggestionsService(client: GeminiClient) {
   return {
     async getSuggestions(req: SuggestionRequest): Promise<SuggestionResult> {
-      const netState = await NetInfo.fetch();
-      if (!netState.isConnected) {
+      const isOnline = typeof window !== 'undefined' ? window.navigator.onLine : true;
+      if (!isOnline) {
         return { status: 'error', error: 'offline' };
       }
 

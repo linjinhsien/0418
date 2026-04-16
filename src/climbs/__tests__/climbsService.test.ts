@@ -1,12 +1,13 @@
 import * as fc from 'fast-check';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { climbsService } from '../climbsService';
 import { climbsRepository } from '../climbsRepository';
 import { ClimbInput } from '../types';
 
-jest.mock('../climbsRepository', () => ({
+vi.mock('../climbsRepository', () => ({
   climbsRepository: {
-    insert: jest.fn().mockResolvedValue(undefined),
-    findAll: jest.fn().mockResolvedValue([]),
+    insert: vi.fn().mockResolvedValue(undefined),
+    findAll: vi.fn().mockResolvedValue([]),
   },
 }));
 
@@ -17,7 +18,7 @@ const validInput: ClimbInput = {
   result: 'sent',
 };
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => vi.clearAllMocks());
 
 describe('climbsService.addClimb', () => {
   it('assigns a UUID and createdAt on every new climb', async () => {

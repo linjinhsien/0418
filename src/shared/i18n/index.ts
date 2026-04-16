@@ -1,19 +1,28 @@
-import { getLocales } from 'expo-localization';
-import { I18n } from 'i18n-js';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
 import en from './en';
 import zhTW from './zh-TW';
 
-const i18n = new I18n({ en, 'zh-TW': zhTW });
-i18n.locale = getLocales()[0]?.languageTag ?? 'zh-TW';
-i18n.enableFallback = true;
-i18n.defaultLocale = 'en';
+i18n
+  .use(initReactI18next)
+  .init({
+    resources: {
+      en: { translation: en },
+      'zh-TW': { translation: zhTW },
+    },
+    lng: typeof window !== 'undefined' ? window.navigator.language : 'zh-TW',
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false,
+    },
+  });
 
 export function t(key: string): string {
   return i18n.t(key);
 }
 
 export function getLocale(): string {
-  return i18n.locale;
+  return i18n.language;
 }
 
 export default i18n;

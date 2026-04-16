@@ -1,80 +1,53 @@
-import * as SQLite from 'expo-sqlite';
 import { MigrationError } from './errorTypes';
 
-export interface Migration {
-  version: number;
-  up: string;
+export interface DB {
+  execAsync(sql: string): Promise<void>;
+  getAllAsync<T>(sql: string, params?: any[]): Promise<T[]>;
+  runAsync(sql: string, params?: any[]): Promise<void>;
 }
 
-const MIGRATIONS: Migration[] = [
-  {
-    version: 1,
-    up: `
-      CREATE TABLE IF NOT EXISTS schema_migrations (
-        version INTEGER PRIMARY KEY,
-        applied_at TEXT NOT NULL
-      );
-      CREATE TABLE IF NOT EXISTS climbs (
-        id          TEXT PRIMARY KEY,
-        routeName   TEXT NOT NULL,
-        grade       TEXT NOT NULL,
-        gradeSystem TEXT NOT NULL DEFAULT 'unknown',
-        gradeWarning INTEGER NOT NULL DEFAULT 0,
-        date        TEXT NOT NULL,
-        location    TEXT,
-        result      TEXT NOT NULL,
-        notes       TEXT,
-        createdAt   TEXT NOT NULL
-      );
-      CREATE TABLE IF NOT EXISTS user_profile (
-        id            TEXT PRIMARY KEY DEFAULT 'singleton',
-        name          TEXT,
-        homeGym       TEXT,
-        climbingSince TEXT,
-        goals         TEXT
-      );
-    `,
-  },
-];
+// Simple browser-based mock using localStorage for persistence
+class LocalDB implements DB {
+  async execAsync(sql: string): Promise<void> {}
 
-let _db: SQLite.SQLiteDatabase | null = null;
+  async getAllAsync<T>(sql: string, params: any[] = []): Promise<T[]> {
+    if (sql.includes('SELECT version FROM schema_migrations')) {
+      return [{ version: 1 }] as any;
+    }
+    if (sql.includes('FROM climbs')) {
+      return JSON.parse(localStorage.getItem('climbs') || '[]');
+    }
+    return [];
+  }
 
-export function getDb(): SQLite.SQLiteDatabase {
-  if (!_db) throw new Error('Database not initialized. Call initDb() first.');
+  async runAsync(sql: string, params: any[] = []): Promise<void> {
+    if (sql.includes('INSERT INTO climbs')) {
+       const climbs = JSON.parse(localStorage.getItem('climbs') || '[]');
+       const newClimb = {
+         id: params[0],
+         routeName: params[1],
+         grade: params[2],
+         gradeSystem: params[3],
+         gradeWarning: params[4],
+         date: params[5],
+         location: params[6],
+         result: params[7],
+         notes: params[8],
+         createdAt: params[9]
+       };
+       climbs.push(newClimb);
+       localStorage.setItem('climbs', JSON.stringify(climbs));
+    }
+  }
+}
+
+let _db: DB | null = null;
+
+export function getDb(): DB {
+  if (!_db) _db = new LocalDB();
   return _db;
 }
 
 export async function initDb(): Promise<void> {
-  _db = await SQLite.openDatabaseAsync('climber.db');
-
-  // Ensure migrations table exists before querying it
-  await _db.execAsync(`
-    CREATE TABLE IF NOT EXISTS schema_migrations (
-      version INTEGER PRIMARY KEY,
-      applied_at TEXT NOT NULL
-    );
-  `);
-
-  const applied = await _db.getAllAsync<{ version: number }>(
-    'SELECT version FROM schema_migrations ORDER BY version ASC'
-  );
-  const appliedVersions = new Set(applied.map((r) => r.version));
-
-  for (const migration of MIGRATIONS) {
-    if (appliedVersions.has(migration.version)) continue;
-    try {
-      await _db.execAsync(migration.up);
-      await _db.runAsync(
-        'INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)',
-        [migration.version, new Date().toISOString()]
-      );
-    } catch (err) {
-      const error: MigrationError = {
-        type: 'migration_error',
-        version: migration.version,
-        cause: err instanceof Error ? err.message : String(err),
-      };
-      throw error;
-    }
-  }
+  _db = new LocalDB();
 }

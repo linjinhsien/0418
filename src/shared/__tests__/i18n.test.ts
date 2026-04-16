@@ -1,25 +1,21 @@
 import * as fc from 'fast-check';
-
-// Mock expo-localization before importing i18n
-jest.mock('expo-localization', () => ({ getLocales: () => [{ languageTag: 'zh-TW' }] }));
-
+import { describe, it, expect, vi } from 'vitest';
 import { t } from '../i18n';
-import en from '../en';
+import en from '../i18n/en';
 
 // Flatten nested keys for testing
-function flattenKeys(obj: Record<string, unknown>, prefix = ''): string[] {
+function flattenKeys(obj: Record<string, any>, prefix = ''): string[] {
   return Object.entries(obj).flatMap(([k, v]) => {
     const key = prefix ? `${prefix}.${k}` : k;
     return typeof v === 'object' && v !== null
-      ? flattenKeys(v as Record<string, unknown>, key)
+      ? flattenKeys(v, key)
       : [key];
   });
 }
 
-const allKeys = flattenKeys(en as unknown as Record<string, unknown>);
+const allKeys = flattenKeys(en);
 
 describe('i18n', () => {
-  // Property 9: key lookup never returns null/empty
   it('Property 9: t(key) returns non-empty string for all known keys', () => {
     allKeys.forEach((key) => {
       const result = t(key);
