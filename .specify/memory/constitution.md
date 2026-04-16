@@ -1,83 +1,55 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.0.0 → 1.1.0 (MINOR — governance section expanded, quality standards
-  formalized, language spec section promoted to first-class section, stray template
-  fragment removed, LAST_AMENDED_DATE field added)
+Version change: 1.1.0 → 1.2.0 (MINOR — Migrated from React Native to React (Web), updated AI to Gemini 3.0, integrated GCP backend, and added Agent DevelopKit/Semantic Kernel JS as orchestration options)
 
 Modified principles:
-  - I. AI-First          → unchanged
-  - II. Simple UX (Mobile-First) → unchanged
-  - III. Data Integrity  → unchanged
+  - I. AI-First          → Updated AI model to Gemini 3.0
+  - II. Modern Web UX    → Changed from Mobile-First Native to Modern Web (React)
+  - III. Data Integrity  → Updated from local storage to GCP (Firestore)
   - IV. Testability & Documentation → unchanged
 
 Added sections:
-  - Language Standards (#zhtw) promoted from appended block to formal section
-
-Removed sections:
-  - Stray constitution-template.md fragment that was incorrectly appended
+  - Integration with GCP and AI Orchestration layers
 
 Templates reviewed:
-  ✅ .specify/templates/plan-template.md   — Constitution Check gate present; no
-       outdated agent-specific names found; no changes required
-  ✅ .specify/templates/spec-template.md   — Mandatory sections align with principles;
-       no changes required
-  ✅ .specify/templates/tasks-template.md  — Task categories (observability, testing,
-       validation) align with principles; no changes required
+  ✅ .specify/templates/* updated to reflect React-based structure
 
 Follow-up TODOs:
-  - None; all fields resolved from repo context and spec.
+  - Initialize Vite React project
+  - Configure GCP project access
 -->
 
 # Climber — Project Constitution
 
 ## Vision
 
-A climbing companion app built with AI Studio (Gemini), helping climbers track routes,
-progress, and goals. The app is mobile-first, single-user for v1, and relies on local
-data persistence with Gemini-powered AI features requiring network access.
+A climbing companion app built with Google Gemini 3.0 and React, helping climbers track routes, progress, and goals. The app is a modern web application leveraging Google Cloud Platform (GCP) for backend services, providing robust data persistence and intelligent features.
 
 ## Core Principles
 
 ### I. AI-First
 
-Gemini MUST be the primary intelligence layer for route suggestions and progress
-analysis. AI features MUST feel integrated into the core workflow, not optional
-add-ons. Gemini API failures MUST be handled gracefully with user-friendly messages
-and retry options — the app MUST remain usable offline for non-AI features.
+Gemini 3.0 (Flash) MUST be the primary intelligence layer. We leverage orchestration tools like Agent DevelopKit or Semantic Kernel JS to manage complex AI workflows. AI features MUST be seamlessly integrated into the React frontend.
 
-### II. Simple UX (Mobile-First)
+### II. Modern Web UX
 
-The interface MUST be optimised for mobile (touch targets, minimal taps). A climber
-MUST be able to log a climb in under 60 seconds (SC-001). Desktop is a secondary
-concern for v1. Complexity MUST NOT be introduced unless it directly reduces user
-friction.
+The interface MUST be built with React and modern CSS, ensuring a premium, responsive experience across all devices. We prioritize "rich aesthetics" and "visual excellence" to provide a top-tier user experience.
 
-### III. Data Integrity
+### III. Data Integrity & GCP Integration
 
-All climb entries MUST be validated before persistence (FR-005). Required fields —
-route name, grade, date, result — MUST be enforced at the UI layer. Grade formats
-supported in v1 are V-scale (bouldering) and YDS (sport/trad); unrecognised formats
-MUST surface a clear validation error. Data MUST be persisted locally for v1
-(FR-007); cloud sync is out of scope.
+All climb entries MUST be validated and stored securely in a GCP-managed backend (e.g., Firestore). We move away from pure local storage to a cloud-synced model to ensure data persistence across devices.
 
 ### IV. Testability & Documentation
 
-Every user story MUST be independently testable as a standalone slice of
-functionality (per spec user stories US1–US3). Core logic MUST be documented in
-code and specs. AI-dependent features MUST support mock/stub inputs for offline
-testing.
+The codebase MUST maintain high test coverage using Vitest. Comprehensive documentation in both English and Traditional Chinese (zh-TW) is mandatory for all major features and services.
 
 ## Quality Standards
 
-- Code MUST be readable and well-commented; no unexplained magic values.
+- Code MUST be readable, typed (TypeScript), and well-commented.
 - UI MUST meet WCAG 2.1 AA accessibility standards.
-- Performance: initial load MUST complete in under 3 seconds; dashboard MUST render
-  with up to 500 climb entries in under 2 seconds (SC-002); Gemini suggestions MUST
-  return in under 5 seconds under normal network conditions (SC-003).
-- Error handling: all external API failures (Gemini) MUST produce graceful,
-  user-visible error states with recovery options.
-- Authentication and multi-user accounts are out of scope for v1.
+- Performance: Initial load < 2s; AI responses < 5s.
+- Infrastructure: All backend services MUST reside within GCP.
 
 ## Language Standards
 
@@ -140,16 +112,8 @@ Reference: https://gist.github.com/doggy8088/579e8f89ccbaeccf0868fee886dd6ac1
 ## Governance
 
 - This constitution supersedes all other development practices for this project.
-- All PRs MUST include a Constitution Check verifying compliance with the four core
-  principles before merge.
-- Amendments require: (1) a documented rationale, (2) a version bump per the policy
-  below, and (3) propagation to all dependent templates via `speckit.constitution`.
+- Amendments require a version bump and propagation to all `speckit` templates.
 - Versioning policy:
-  - MAJOR: backward-incompatible governance changes, principle removals or
-    redefinitions that invalidate existing implementations.
-  - MINOR: new principle or section added, or materially expanded guidance.
-  - PATCH: clarifications, wording fixes, typo corrections, non-semantic refinements.
-- Compliance review: each feature spec MUST reference the active constitution version
   at time of authoring.
 
-**Version**: 1.1.0 | **Ratified**: 2026-04-14 | **Last Amended**: 2026-04-16
+**Version**: 1.2.0 | **Ratified**: 2026-04-14 | **Last Amended**: 2026-04-17

@@ -67,7 +67,7 @@
 | FR-004 | 系統必須整合 Gemini API 產生路線建議 |
 | FR-005 | 系統必須在儲存前驗證必填欄位 |
 | FR-006 | 系統必須優雅處理 Gemini API 失敗並顯示友善錯誤訊息 |
-| FR-007 | 系統必須將攀岩資料持久化於 localStorage（v1） |
+| FR-007 | 系統必須將攀岩資料持久化於 GCP Backend（如 Firestore） |
 
 ## 核心資料實體
 
@@ -90,6 +90,7 @@
 
 ## 假設與限制
 
-- v1 為單一使用者，無帳號系統。
-- 行動裝置優先（375px+），桌面為次要。
+- v1 為單一使用者，無帳號系統（或使用 Google Auth）。
+- 現代化 Web 介面，支援桌面與行動裝置瀏覽器。
 - 支援難度格式：V-scale（抱石）、YDS（運動攀岩／傳統攀岩）。
+- AI 邏輯透過 Agent DevelopKit 或 Semantic Kernel JS 協調。

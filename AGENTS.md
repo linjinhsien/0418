@@ -1,104 +1,62 @@
 # Climber App Development Guidelines
 
-Auto-generated from feature plans. Last updated: 2026-04-16T23:42:22+08:00
+Auto-generated from feature plans. Last updated: 2026-04-17T00:15:00+08:00
 
 ## Active Technologies
 
 | Category | Technology | Version |
 |---|---|---|
 | Language | TypeScript | 5.x |
-| Framework | React Native (Expo) | SDK 51+ |
-| Router | Expo Router | file-based |
-| State | Context API | — |
-| Storage | expo-sqlite | v14+ |
-| Charts | Victory Native (Skia) | v41+ |
-| AI | @google/generative-ai | Gemini 1.5 Flash |
-| Network | @react-native-community/netinfo | — |
-| i18n | i18n-js + expo-localization | — |
-| Testing | Jest + React Native Testing Library | — |
-| Property tests | fast-check | — |
+| Frontend | React (Vite) | 18.x |
+| AI | @google/generative-ai | Gemini 3.0 (Flash) |
+| Orchestration | Agent DevelopKit / Semantic Kernel JS | — |
+| Backend | Google Cloud Platform (GCP) | Cloud Run / Firestore |
+| Styles | Vanilla CSS (Modern) | — |
+| Charts | Recharts / Chart.js | — |
+| i18n | react-i18next + i18next | — |
+| Testing | Vitest + React Testing Library | — |
 
 ## Project Structure
 
 ```text
 src/
-├── climbs/
-│   ├── ClimbForm.tsx
-│   ├── ClimbList.tsx
-│   ├── climbsRepository.ts
-│   └── climbsService.ts
-├── dashboard/
-│   ├── Dashboard.tsx
-│   └── statsAggregator.ts
-├── suggestions/
-│   ├── SuggestionsScreen.tsx
-│   ├── suggestionsService.ts
-│   └── geminiClient.ts
-├── profile/
-│   ├── ProfileScreen.tsx
-│   └── profileRepository.ts
-├── shared/
-│   ├── gradeUtils.ts
-│   ├── db.ts
-│   ├── errorTypes.ts
-│   └── i18n/
-│       ├── index.ts
-│       ├── en.ts
-│       └── zh-TW.ts
-└── navigation/
-    └── AppNavigator.tsx
-
-specs/001-climber-app/
-├── spec.md
-├── plan.md
-├── research.md
-├── data-model.md
-├── tasks.md
-└── analysis.md
-```
-
-## Commands
-
-```bash
-# Install dependencies
-npx expo install
-
-# Start dev server
-npx expo start
-
-# Run tests
-npx jest
-
-# Run tests with coverage
-npx jest --coverage
-
-# Type check
-npx tsc --noEmit
-
-# Lint
-npx eslint src/
+├── components/       # Reusable UI components
+├── features/         # Feature-based architecture
+│   ├── climbs/       # Climb logging and history
+│   ├── dashboard/    # Progress stats and charts
+│   ├── suggestions/  # Gemini-powered AI suggestions
+│   └── profile/      # User profile management
+├── services/         # API clients (GCP/Gemini)
+├── store/            # State management (Context/Zustand)
+├── shared/           # Utils, i18n, types
+│   ├── utils/
+│   ├── i18n/
+│   └── types/
+└── App.tsx           # Main application entry
 ```
 
 ## Architecture Rules
 
-- UI layer MUST NOT import from Data layer directly — all data flows through Domain layer
-- `shared/` MUST NOT import from any feature module (`climbs`, `dashboard`, `suggestions`, `profile`)
-- `dashboard/` MUST NOT write or mutate Climb data
-- `suggestions/` MUST NOT persist any data to SQLite
-- `profile/` MUST NOT trigger Gemini API calls
-- Grade validation MUST live exclusively in `shared/gradeUtils.ts`
+- UI layer MUST NOT import from Data layer directly — all data flows through Services/Domain layer
+- `shared/` MUST NOT import from any feature module
+- `features/dashboard/` MUST NOT write or mutate Climb data directly
+- `features/suggestions/` MUST NOT persist data — use dedicated services
+- Grade validation MUST live exclusively in `shared/utils/gradeUtils.ts`
+- Backend interactions MUST be abstracted via `services/`
 
 ## Code Style
 
 - TypeScript strict mode enabled
-- All user-facing strings via `t()` from `shared/i18n` — no hardcoded strings
-- Error states as typed values (`SuggestionError`, `MigrationError`), never raw exceptions
-- All components use `t()` for labels, buttons, error messages, and empty-state text
-- Traditional Chinese (zh-TW) Taiwan conventions — see constitution vocabulary table
+- All user-facing strings via `t()` from `i18n` — no hardcoded strings
+- Error states as typed values, never raw exceptions
+- Traditional Chinese (zh-TW) Taiwan conventions for documentation and UI
 
 ## Recent Changes
 
-- **001-climber-app** (2026-04-16): Stack migrated from React Web + localStorage to React Native (Expo) + SQLite. Added: expo-sqlite versioned migrations, Victory Native charts, i18n-js zh-TW/en localization, offline resilience via netinfo, grade validation utility, UserProfile CRUD, Gemini suggestions with typed error states.
+- **Stack Update** (2026-04-17): Migrated from React Native (Expo) to React (Web) + GCP Backend.
+- **AI Upgrade**: Switched to Gemini 3.0 (Flash) with support for Agent DevelopKit / Semantic Kernel JS.
+- **Backend**: Integrated GCP (Firestore/Cloud Run) for data persistence.
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
+
