@@ -6,9 +6,7 @@
 
 行動裝置優先的攀岩記錄 Web 應用程式，核心功能為攀岩記錄、進度儀表板、Gemini AI 路線建議。
 
-<<<<<<< HEAD
----
-=======
+
 | Category | Decision | Reason |
 |---|---|---|
 | Language | TypeScript 5.x | Type safety for climb data models |
@@ -24,7 +22,7 @@
 | Target Platform | Mobile Web (Responsive, 375px+) | Desktop secondary |
 | Constraints | Client-side only, PWA-ready | No backend for v1 |
 | Env Config | `NANOBANANA_API_KEY` via `~/.gemini/.env` (global) | Not stored in project `.env` |
->>>>>>> origin/001-climber-app
+
 
 ## 技術棧
 
