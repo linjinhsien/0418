@@ -17,7 +17,7 @@ Incremental implementation following the layered architecture: shared utilities 
     - Implement `classifyGrade(grade: string): GradeResult` using V-scale regex `/^[Vv](1[0-7]|[0-9])$/` and YDS regex `/^5\.(1[0-5][a-d]?|[0-9])$/`
     - Return `{ gradeSystem, hasWarning }` — never throw
     - _Requirements: 6.1, 6.2, 6.3, 6.4_
-  - [ ]* 2.2 Write property tests for GradeUtils
+  - [ ] 2.2 Write property tests for GradeUtils
     - **Property 1: Grade classification is total and exhaustive** — for any string, classifyGrade returns one of three values and never throws
     - **Property 2: Unknown grades always carry a warning** — for any non-V-scale, non-YDS string, hasWarning is true
     - **Property 3: Valid grades never carry a warning** — for any valid V-scale or YDS string, hasWarning is false
@@ -32,10 +32,10 @@ Incremental implementation following the layered architecture: shared utilities 
     - Define migration runner: reads `schema_migrations`, applies pending migrations in ascending version order, surfaces `MigrationError` and halts on failure
     - Register v1 migration: create `climbs`, `user_profile`, `schema_migrations` tables
     - _Requirements: 10.1, 10.2, 10.3_
-  - [ ]* 3.2 Write property test for migration idempotence
+  - [ ] 3.2 Write property test for migration idempotence
     - **Property 10: Migration idempotence** — running the migration runner twice does not re-apply already-applied migrations
     - _Requirements: 10.2_
-  - [ ]* 3.3 Write unit test for migration halt-on-failure
+  - [ ] 3.3 Write unit test for migration halt-on-failure
     - Verify that when a migration throws, subsequent migrations do not run
     - _Requirements: 10.3_
 
@@ -46,10 +46,10 @@ Incremental implementation following the layered architecture: shared utilities 
   - [ ] 4.2 Implement `src/profile/profileRepository.ts`
     - Implement `get(): Promise<UserProfile | null>` and `save(profile: UserProfile): Promise<void>` using singleton id
     - _Requirements: 5.1, 5.2_
-  - [ ]* 4.3 Write property test for climb persistence round-trip
+  - [ ] 4.3 Write property test for climb persistence round-trip
     - **Property 4: Climb persistence round-trip** — for any valid ClimbInput, addClimb then getClimbs returns a list containing the climb
     - _Requirements: 1.1, 2.1_
-  - [ ]* 4.4 Write property test for profile round-trip
+  - [ ] 4.4 Write property test for profile round-trip
     - **Property (profile): save then get returns the same UserProfile**
     - _Requirements: 5.1_
 
@@ -61,7 +61,7 @@ Incremental implementation following the layered architecture: shared utilities 
     - Implement `addClimb(input: ClimbInput): Promise<Climb>`: validate required fields, call `GradeUtils.classifyGrade`, assign UUID and `createdAt`, persist via `ClimbsRepository`
     - Implement `getClimbs(): Promise<Climb[]>`: delegate to `ClimbsRepository.findAll`
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
-  - [ ]* 6.2 Write unit tests for ClimbsService validation
+  - [ ] 6.2 Write unit tests for ClimbsService validation
     - Test rejection of missing required fields (routeName, grade, date, result)
     - Test that UUID and createdAt are assigned on every new climb
     - _Requirements: 1.5, 1.6, 1.7_
@@ -72,11 +72,11 @@ Incremental implementation following the layered architecture: shared utilities 
     - Return `totalClimbs`, `totalSends`, `totalAttempts`, `byGrade`
     - Must be pure — no writes, no side effects
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
-  - [ ]* 7.2 Write property tests for StatsAggregator
+  - [ ] 7.2 Write property tests for StatsAggregator
     - **Property 5: Stats are consistent with climb list** — totalClimbs, totalSends, totalAttempts match list counts
     - **Property 6: Grade breakdown covers all climbs** — sum of byGrade values equals totalClimbs
     - _Requirements: 3.1, 3.2, 3.3_
-  - [ ]* 7.3 Write unit tests for StatsAggregator edge cases
+  - [ ] 7.3 Write unit tests for StatsAggregator edge cases
     - Empty list returns all zeros
     - Single climb of each result type
     - _Requirements: 3.5_
@@ -92,11 +92,11 @@ Incremental implementation following the layered architecture: shared utilities 
     - Return `{ error: 'api_error' }` on GeminiClient failure
     - Never persist responses
     - _Requirements: 4.1, 4.2, 4.4, 4.5, 4.6, 4.9_
-  - [ ]* 8.3 Write property tests for SuggestionsService error states
+  - [ ] 8.3 Write property tests for SuggestionsService error states
     - **Property 7: Offline state prevents Gemini calls** — when offline, returns `{ error: 'offline' }` and GeminiClient is not invoked
     - **Property 8: Suggestions are never persisted** — after any getSuggestions call, SQLite contains no suggestion data
     - _Requirements: 4.4, 4.9_
-  - [ ]* 8.4 Write unit tests for SuggestionsService
+  - [ ] 8.4 Write unit tests for SuggestionsService
     - api_error on GeminiClient throw
     - no_history when climb list is empty
     - System instruction is always included in prompt
@@ -113,10 +113,10 @@ Incremental implementation following the layered architecture: shared utilities 
   - [ ] 10.2 Create `src/shared/locales/en.json` and `src/shared/locales/zh-TW.json`
     - Add all user-facing strings for ClimbForm, ClimbList, Dashboard, SuggestionsScreen, ProfileScreen
     - _Requirements: 9.4_
-  - [ ]* 10.3 Write property tests for localization
+  - [ ] 10.3 Write property tests for localization
     - **Property 9: Localization key lookup never returns null** — for any key and any supported locale, `t(key)` returns a non-empty string
     - _Requirements: 9.5_
-  - [ ]* 10.4 Write unit test for zh-TW locale routing
+  - [ ] 10.4 Write unit test for zh-TW locale routing
     - Verify `t(key)` returns zh-TW string when locale is zh-TW
     - Verify `t(key)` returns English fallback for a key missing from zh-TW.json
     - _Requirements: 9.2, 9.3, 9.5_
@@ -133,7 +133,7 @@ Incremental implementation following the layered architecture: shared utilities 
     - Render route name, grade, date, result for each climb
     - Display empty-state message when list is empty (use `t()`)
     - _Requirements: 2.1, 2.2, 2.3_
-  - [ ]* 11.3 Write unit tests for ClimbForm validation
+  - [ ] 11.3 Write unit tests for ClimbForm validation
     - Whitespace-only routeName is rejected
     - Missing grade, date, result each show field-level errors
     - _Requirements: 1.5_
@@ -155,7 +155,7 @@ Incremental implementation following the layered architecture: shared utilities 
     - Show offline banner while device is offline
     - Use `t()` for all labels and banners
     - _Requirements: 4.3, 4.7, 4.8, 4.10, 9.2, 9.3_
-  - [ ]* 13.2 Write unit tests for SuggestionsScreen
+  - [ ] 13.2 Write unit tests for SuggestionsScreen
     - Renders correct banner for each error type
     - Pre-fills inputs from profile without auto-submitting
     - _Requirements: 4.7, 4.10_
@@ -181,7 +181,7 @@ Incremental implementation following the layered architecture: shared utilities 
 
 ## Notes
 
-- Tasks marked with `*` are optional and can be skipped for a faster MVP
+- All tasks are required — comprehensive testing from the start
 - Each task references specific requirements for traceability
 - Checkpoints ensure incremental validation at key milestones
 - Property tests use `fast-check` with minimum 100 iterations each
