@@ -1,0 +1,71 @@
+const zhTW = {
+  nav: {
+    climbs: '攀岩記錄',
+    dashboard: '儀表板',
+    suggestions: 'AI 建議',
+    profile: '個人資料',
+  },
+  common: {
+    save: '儲存',
+    cancel: '取消',
+    retry: '重試',
+    loading: '載入中…',
+    error: '錯誤',
+  },
+  climbForm: {
+    title: '記錄攀岩',
+    routeName: '路線名稱',
+    grade: '難度',
+    date: '日期',
+    location: '地點（選填）',
+    result: '結果',
+    notes: '備註（選填）',
+    submit: '儲存記錄',
+    sent: '完攀',
+    attempt: '嘗試',
+    validation: {
+      required: '此欄位為必填',
+      invalidDate: '請輸入有效日期',
+      gradeWarning: '無法識別的難度格式，已儲存為自訂文字',
+    },
+  },
+  climbList: {
+    title: '攀岩歷史',
+    empty: '尚無攀岩記錄，點擊「記錄攀岩」開始吧！',
+    sent: '完攀',
+    attempt: '嘗試',
+  },
+  dashboard: {
+    title: '儀表板',
+    totalClimbs: '總攀岩次數',
+    totalSends: '完攀次數',
+    totalAttempts: '嘗試次數',
+    gradeBreakdown: '各難度分布',
+    empty: '尚無資料，記錄攀岩後即可查看進度！',
+  },
+  suggestions: {
+    title: 'AI 路線建議',
+    maxGrade: '您的最高難度',
+    style: '攀岩風格',
+    submit: '取得建議',
+    offline: '目前離線，請連線後再取得 AI 建議。',
+    apiError: '無法連線至 AI 服務，請稍後再試。',
+    noHistory: '請先記錄至少一筆攀岩後再請求建議。',
+    styles: {
+      bouldering: '抱石',
+      sport: '運動攀岩',
+      trad: '傳統攀岩',
+    },
+  },
+  profile: {
+    title: '個人資料',
+    name: '姓名',
+    homeGym: '主場地',
+    climbingSince: '開始攀岩時間',
+    goals: '目標',
+    save: '儲存資料',
+    empty: '填寫個人資料以個人化您的體驗。',
+  },
+};
+
+export default zhTW;
