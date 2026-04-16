@@ -6,7 +6,25 @@
 
 行動裝置優先的攀岩記錄 Web 應用程式，核心功能為攀岩記錄、進度儀表板、Gemini AI 路線建議。
 
+<<<<<<< HEAD
 ---
+=======
+| Category | Decision | Reason |
+|---|---|---|
+| Language | TypeScript 5.x | Type safety for climb data models |
+| Bundler | **Vite 5** | Fast HMR, native ESM, minimal config |
+| UI Framework | **React 18** | Component model fits LogForm / Dashboard / AIBox |
+| State Management | **Zustand** | Lightweight, no boilerplate; fits single-user local-only v1 |
+| Routing | **React Router v6** | Simple 3-page app (Home / Dashboard / AI) |
+| Charts | **Chart.js 4** + react-chartjs-2 | Grade trend + success rate charts |
+| AI | **@google/generative-ai** (Gemini SDK) | Official SDK, streaming support |
+| Storage | **localStorage** (v1) | Simple JSON persistence; IndexedDB upgrade path noted |
+| Styling | CSS Modules + `src/styles/theme.css` | No runtime CSS-in-JS overhead |
+| Testing | **Vitest** + Testing Library | Co-located with Vite, fast unit tests |
+| Target Platform | Mobile Web (Responsive, 375px+) | Desktop secondary |
+| Constraints | Client-side only, PWA-ready | No backend for v1 |
+| Env Config | `NANOBANANA_API_KEY` via `~/.gemini/.env` (global) | Not stored in project `.env` |
+>>>>>>> origin/001-climber-app
 
 ## 技術棧
 
