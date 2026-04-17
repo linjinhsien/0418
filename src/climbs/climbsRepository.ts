@@ -5,8 +5,8 @@ export const climbsRepository = {
   async insert(climb: Climb): Promise<void> {
     const db = getDb();
     await db.runAsync(
-      `INSERT INTO climbs (id, routeName, grade, gradeSystem, gradeWarning, date, location, result, notes, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO climbs (id, routeName, grade, gradeSystem, gradeWarning, date, location, locationId, result, notes, createdAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         climb.id,
         climb.routeName,
@@ -15,6 +15,7 @@ export const climbsRepository = {
         climb.gradeWarning ? 1 : 0,
         climb.date,
         climb.location ?? null,
+        climb.locationId ?? null,
         climb.result,
         climb.notes ?? null,
         climb.createdAt,
@@ -32,6 +33,7 @@ export const climbsRepository = {
       gradeWarning: number;
       date: string;
       location: string | null;
+      locationId: string | null;
       result: string;
       notes: string | null;
       createdAt: string;
@@ -45,6 +47,7 @@ export const climbsRepository = {
       gradeWarning: r.gradeWarning === 1,
       date: r.date,
       location: r.location ?? undefined,
+      locationId: r.locationId ?? undefined,
       result: r.result as Climb['result'],
       notes: r.notes ?? undefined,
       createdAt: r.createdAt,

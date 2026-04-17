@@ -80,6 +80,16 @@ export default function ClimbList({ refreshTrigger }: { refreshTrigger?: number 
                       <div className="flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5" />
                         {climb.location}
+                        {climb.locationId && (
+                          <a 
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(climb.location)}&query_place_id=${climb.locationId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-1 text-blue-500 hover:text-blue-600 underline"
+                          >
+                            (地圖)
+                          </a>
+                        )}
                       </div>
                     )}
                   </div>

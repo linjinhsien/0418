@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createGeminiClient } from './geminiClient';
 import { createSuggestionsService, AISuggestion, ClimbingStyle, SuggestionRequest, SuggestionIntent } from './suggestionsService';
@@ -13,39 +13,46 @@ export default function SuggestionsScreen() {
   const [maxGrade, setMaxGrade] = useState('');
   const [style, setStyle] = useState<ClimbingStyle>('bouldering');
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
-  const [streamText, setStreamText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const streamRef = useRef('');
+  const [streamText, setStreamText] = useState('');
 
   useEffect(() => {
-    profileRepository.get();
+    profileRepository.get().then(p => {
+      // Logic for pre-filling
+    });
     const onOnline = () => setIsOffline(false);
     const onOffline = () => setIsOffline(true);
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
-    return () => { window.removeEventListener('online', onOnline); window.removeEventListener('offline', onOffline); };
+    return () => { 
+      window.removeEventListener('online', onOnline); 
+      window.removeEventListener('offline', onOffline); 
+    };
   }, []);
 
   async function getAISuggestions(intent: SuggestionIntent = 'general') {
-    if (!maxGrade) { setError(t('climbForm.validation.required')); return; }
+    if (!maxGrade) {
+      setError(t('climbForm.validation.required'));
+      return;
+    }
     setLoading(true);
     setError(null);
     setSuggestions([]);
     setStreamText('');
-    streamRef.current = '';
-
-    const req: SuggestionRequest = { maxGrade, style, intent };
-
-    const result = await suggestionsService.getSuggestionsStream(req, (chunk) => {
-      streamRef.current += chunk;
-      setStreamText(streamRef.current);
-    });
-
+    
+    const req: SuggestionRequest = { 
+      maxGrade, 
+      style, 
+      intent,
+      onStreamChunk: (chunk) => setStreamText(prev => prev + chunk)
+    };
+    
+    const result = await suggestionsService.getSuggestions(req);
+    
     if (result.status === 'success') {
       setSuggestions(result.suggestions);
-      setStreamText('');
     } else {
       const msgKey = result.error === 'offline' ? 'suggestions.offline'
         : result.error === 'no_history' ? 'suggestions.noHistory'
@@ -98,18 +105,29 @@ export default function SuggestionsScreen() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <button onClick={() => getAISuggestions('general')} disabled={loading || isOffline}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all">
+          <button
+            onClick={() => getAISuggestions('general')}
+            disabled={loading || isOffline}
+            className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
+          >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
             {t('suggestions.submit')}
           </button>
-          <button onClick={() => getAISuggestions('weakness')} disabled={loading || isOffline}
-            className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all">
+          
+          <button
+            onClick={() => getAISuggestions('weakness')}
+            disabled={loading || isOffline}
+            className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
+          >
             <BrainCircuit className="w-4 h-4" />
             分析弱點
           </button>
-          <button onClick={() => getAISuggestions('training_plan')} disabled={loading || isOffline}
-            className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all">
+
+          <button
+            onClick={() => getAISuggestions('training_plan')}
+            disabled={loading || isOffline}
+            className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
+          >
             <Target className="w-4 h-4" />
             四週計畫
           </button>
@@ -123,21 +141,17 @@ export default function SuggestionsScreen() {
         </div>
       )}
 
-      {/* Streaming live output */}
       {loading && streamText && (
-        <div className="bg-white/5 border border-indigo-500/30 rounded-2xl p-5">
-          <p className="text-xs text-indigo-400 mb-2 flex items-center gap-1">
-            <Loader2 className="w-3 h-3 animate-spin" /> 正在生成…
-          </p>
-          <pre className="text-sm text-slate-300 whitespace-pre-wrap font-mono leading-relaxed">
-            {streamText}
-            <span className="inline-block w-1.5 h-4 bg-indigo-400 animate-pulse ml-0.5 align-middle" />
-          </pre>
+        <div className="bg-white/5 border border-indigo-500/30 rounded-2xl p-6 italic text-slate-400 text-sm animate-pulse">
+          <div className="flex items-center gap-2 mb-2 text-indigo-400 non-italic font-bold">
+            <BrainCircuit className="w-4 h-4" />
+            教練正在分析中...
+          </div>
+          {streamText}
         </div>
       )}
 
-      {/* Final parsed suggestions */}
-      {!loading && suggestions.length > 0 && (
+      {suggestions.length > 0 && (
         <div className="space-y-3">
           {suggestions.map((s, i) => (
             <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-indigo-500/50 transition-colors">
