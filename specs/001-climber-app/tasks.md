@@ -57,10 +57,10 @@
 ## Phase 5: US3 — AI 路線建議（P3）
 **目標**: 整合 Gemini 3.0 Flash 產生建議，並優雅處理錯誤與離線狀態。
 
-- [ ] T022 Implement `src/suggestions/geminiClient.ts`: SDK wrapper for Gemini 3.0 Flash
-- [ ] T023 Implement `src/suggestions/suggestionsService.ts`: Context construction and error handling
-- [ ] T024 Implement `src/suggestions/SuggestionsScreen.tsx`: AI Input form and suggestion display cards
-- [ ] T025 [P] Implement error banners for API failures and offline mode
+- [x] T022 Implement `src/suggestions/geminiClient.ts`: SDK wrapper for Gemini 3.0 Flash
+- [x] T023 Implement `src/suggestions/suggestionsService.ts`: Context construction and error handling
+- [x] T024 Implement `src/suggestions/SuggestionsScreen.tsx`: AI Input form and suggestion display cards
+- [x] T025 [P] Implement error banners for API failures and offline mode
 
 **檢查點**: 模擬 API 呼叫可正確顯示建議內容與錯誤處理。
 ---
