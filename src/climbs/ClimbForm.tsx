@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { climbsService } from './climbsService';
-import { ClimbInput, ClimbResult } from './types';
 import { useTranslation } from 'react-i18next';
 import { Calendar, MapPin, Tag, Type, Save, Loader2, AlertCircle } from 'lucide-react';
+import { climbsService } from './climbsService';
+import { ClimbInput, ClimbResult } from './types';
+import { PlaceAutocomplete } from '@/components/PlaceAutocomplete';
 
 const RESULTS: ClimbResult[] = ['sent', 'attempt'];
 
@@ -116,11 +117,9 @@ export default function ClimbForm({ onSaved }: { onSaved?: () => void }) {
               <MapPin className="w-4 h-4" />
               {t('climbForm.location')}
             </label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-              value={form.location}
-              onChange={(e) => handleChange('location', e.target.value)}
+            <PlaceAutocomplete
+              onPlaceSelect={(name) => handleChange('location', name)}
+              defaultValue={form.location}
               placeholder={t('climbForm.location')}
             />
           </div>
