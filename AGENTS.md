@@ -40,15 +40,17 @@ Auto-generated from feature plans. Last updated: 2026-04-17T03:18:00+08:00
 
 - **Script Path**: `.gemini/skills/felo-search/scripts/felo_search.cjs`
 - **Key Note**: 2026-04-17 Fixed JSON parsing to handle `data.data` nested structure and `res.link` mapping.
+| AI | @google/generative-ai | Gemini 3.0 Flash (2.0-flash experimental) |
+| Search | Felo Search API | V2 (Optimized) |
+| Orchestration | Semantic Kernel / AgentDevelopKit | 2026 Core |
 
 ## AI Agent Implementation Guidelines (2026)
 
+- **Orchestration**: Prefer **Semantic Kernel** for managing complex goal-oriented tasks.
+- **Development Kit**: Use **AgentDevelopKit** standard patterns for agent personality and memory management.
 - **Backend Integration**: Prefer **Vertex AI for Firebase** over client-side direct calls to protect API keys.
+- **Search Augmented**: Integrate **Felo Search** for real-time climbing route status and local gym news.
 - **Structured Output**: Always set `responseMimeType: "application/json"` in `generationConfig`.
-- **Function Calling**: Use Gemini 2.0 Flash's function calling for dynamic data retrieval (e.g., `get_climb_history`).
-- **Performance**: Implement **Streaming** for long responses to maintain SC-003 < 5s target.
-- **Security**: Enable **Firebase App Check** for all Gemini API endpoints.
-
 ## Actual Project Structure
 
 ```text
