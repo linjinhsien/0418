@@ -9,12 +9,12 @@
 
 ## Phase 1: Setup（專案初始化）
 **目的**: 初始化 Vite + React 環境並安裝核心相依套件
-- [ ] T001 Initialize Vite React project with TypeScript (已完成)
-- [ ] T002 Install core dependencies: `firebase`, `@google/generative-ai`, `recharts`, `lucide-react`, `framer-motion`, `clsx`, `tailwind-merge`, `react-i18next`, `i18next`, `uuid`
-- [ ] T003 Install dev dependencies: `vitest`, `@testing-library/react`, `@vitejs/plugin-react`, `jsdom`
-- [ ] T004 Organize directory structure: `src/climbs/`, `src/dashboard/`, `src/suggestions/`, `src/profile/`, `src/shared/`, `src/components/`
-- [ ] T005 [P] Configure Vitest in `vite.config.ts`
-- [ ] T006 [P] Configure TypeScript strict mode and paths in `tsconfig.json`
+- [x] T001 Initialize Vite React project with TypeScript (已完成)
+- [x] T002 Install core dependencies: `firebase`, `@google/generative-ai`, `recharts`, `lucide-react`, `framer-motion`, `clsx`, `tailwind-merge`, `react-i18next`, `i18next`, `uuid`
+- [x] T003 Install dev dependencies: `vitest`, `@testing-library/react`, `@vitejs/plugin-react`, `jsdom`
+- [x] T004 Organize directory structure: `src/climbs/`, `src/dashboard/`, `src/suggestions/`, `src/profile/`, `src/shared/`, `src/components/`
+- [x] T005 [P] Configure Vitest in `vite.config.ts`
+- [x] T006 [P] Configure TypeScript strict mode and paths in `tsconfig.json`
 
 **檢查點**: `npm run dev` 可正常啟動且 `npm run test` 可執行。
 ---
