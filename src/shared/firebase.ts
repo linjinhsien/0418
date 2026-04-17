@@ -4,7 +4,7 @@ import { getFirestore } from 'firebase/firestore';
 const firebaseConfig = {
   projectId: "solar-curve-490711-p4",
   appId: "1:25381047689:web:4bbef3192eb920ad912558",
-  apiKey: "", // 注意：請確認是否需要補上 API Key
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "solar-curve-490711-p4.firebaseapp.com",
   storageBucket: "solar-curve-490711-p4.firebasestorage.app",
   messagingSenderId: "25381047689",
