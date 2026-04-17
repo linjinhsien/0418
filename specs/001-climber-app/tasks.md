@@ -46,10 +46,10 @@
 ## Phase 4: US2 — 進度儀表板（P2）
 **目標**: 將 Firestore 資料聚合並透過 Recharts 渲染難度趨勢與成功率。
 
-- [ ] T018 Implement `src/dashboard/statsAggregator.ts`: Pure function to compute stats from climb list
-- [ ] T019 [P] Write unit tests for stats calculation logic
-- [ ] T020 Implement `src/dashboard/Dashboard.tsx`: Render LineChart and PieChart using Recharts
-- [ ] T021 Handle empty states and loading indicators for charts
+- [x] T018 Implement `src/dashboard/statsAggregator.ts`: Pure function to compute stats from climb list
+- [x] T019 [P] Write unit tests for stats calculation logic
+- [x] T020 Implement `src/dashboard/Dashboard.tsx`: Render LineChart and PieChart using Recharts
+- [x] T021 Handle empty states and loading indicators for charts
 
 **檢查點**: 匯入樣本資料後，儀表板可正確顯示圖表。
 ---
