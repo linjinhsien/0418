@@ -1,14 +1,14 @@
 # 研究報告：攀岩夥伴應用程式
 
 **分支**：`001-climber-app` | **日期**：2026-04-16T23:42:22+08:00
-**產出自**：`speckit.plan` Phase 0
+**產出自**：`speckit.plan` Phase 0 | **更新**：2026-04-17（統一模型版本；標記已棄用章節）
 
 ---
 
 ## 1. Gemini API — 攀岩路線建議提示詞工程
 
 ### 決策
-使用 `@google/generative-ai` 官方 SDK，模型 `gemini-1.5-flash`。提示詞採用 system instruction + user turn 雙層結構。
+使用 `@google/generative-ai` 官方 SDK，模型 **`gemini-2.0-flash`**（Gemini 3.0 Flash）。提示詞採用 system instruction + user turn 雙層結構。API key 透過 `import.meta.env.VITE_GEMINI_API_KEY` 注入。
 
 ### 提示詞樣板
 
@@ -48,15 +48,18 @@
 ### 替代方案評估
 | 方案 | 評估 | 結論 |
 |---|---|---|
+| `gemini-2.0-flash` | 低延遲，Gemini 3.0 Flash，符合 SC-003 5 秒目標 | **採用** |
+| `gemini-1.5-flash` | 舊版，已棄用 | 捨棄 |
 | `gemini-1.5-pro` | 品質更高但延遲較長，超過 SC-003 5 秒目標風險較高 | 捨棄 |
-| `gemini-1.5-flash` | 低延遲，適合行動裝置即時回應 | **採用** |
 | 自建後端代理 | 可隱藏 API 金鑰，但 v1 無後端 | 延後至 v2 |
 
 ---
 
-## 2. expo-sqlite — 版本化遷移模式
+## 2. ~~expo-sqlite — 版本化遷移模式~~ ⚠️ 已棄用
 
-### 決策
+> **此章節已棄用**。專案已於 2026-04-17 從 React Native + expo-sqlite 遷移至 React Web + Firebase Firestore。以下內容僅供歷史參考。
+
+### 決策（已棄用）
 使用 `expo-sqlite` v14+（Expo SDK 51+）的 `SQLiteDatabase.execAsync` 搭配手動版本表管理遷移。
 
 ### 遷移執行器設計
@@ -106,7 +109,9 @@ const MIGRATIONS: Migration[] = [
 
 ---
 
-## 3. Victory Native — 圖表整合
+## 3. ~~Victory Native — 圖表整合~~ ⚠️ 已棄用（現用 Recharts）
+
+> **此章節已棄用**。專案已改用 **Recharts**（Web 原生圖表庫）。以下內容僅供歷史參考。
 
 ### 決策
 使用 `victory-native` v41+（基於 Skia 的新版本），搭配 `react-native-reanimated` 與 `@shopify/react-native-skia`。
@@ -128,7 +133,9 @@ const MIGRATIONS: Migration[] = [
 
 ---
 
-## 4. i18n-js + Expo Localization — zh-TW 設定
+## 4. ~~i18n-js + Expo Localization — zh-TW 設定~~ ⚠️ 已棄用（現用 react-i18next）
+
+> **此章節已棄用**。專案已改用 **react-i18next**（Web 標準 i18n 方案）。以下內容僅供歷史參考。
 
 ### 決策
 使用 `i18n-js` v4 搭配 `expo-localization` 偵測裝置語系，預設 zh-TW，fallback 為 en。
