@@ -64,16 +64,17 @@
 | FR-001 | 系統必須允許記錄：路線名稱、難度、日期、地點、結果（完攀／嘗試）、備註（選填） |
 | FR-002 | 系統必須依日期降冪顯示攀岩歷史清單 |
 | FR-003 | 系統必須顯示難度趨勢與成功率圖表 |
-| FR-004 | 系統必須整合 Gemini API 產生路線建議 |
-| FR-005 | 系統必須在儲存前驗證必填欄位 |
-| FR-006 | 系統必須優雅處理 Gemini API 失敗並顯示友善錯誤訊息 |
-| FR-007 | 系統必須將攀岩資料持久化於 GCP Backend（如 Firestore） |
+| FR-004 | 系統必須整合 Gemini API（`gemini-2.0-flash`）產生路線建議；提示詞合約定義於 `specs/001-climber-app/data-model.md`（Gemini 提示詞合約章節） |
+| FR-005 | 系統必須在儲存前驗證必填欄位；輸入不支援格式的難度時，系統必須標記 `gradeWarning: true` 並顯示警告（不阻擋送出） |
+| FR-006 | 系統必須優雅處理 Gemini API 失敗，顯示包含錯誤類型說明與重試按鈕的友善錯誤訊息 |
+| FR-007 | 系統必須將攀岩資料持久化於 Firebase Firestore |
+| FR-008 | 系統必須在離線狀態下顯示 offline banner，並禁止發出 Gemini API 請求 |
 
 ## 核心資料實體
 
 - **ClimbEntry**：路線名稱、難度、日期、地點、結果、備註。
-- **UserProfile**：姓名、主場地、開始攀岩時間、目標。
-- **AISuggestion**：輸入難度＋風格 → 建議路線清單（含理由）。
+- **UserProfile**：姓名、主場地、開始攀岩時間、目標。v1 為單例（singleton），每個瀏覽器實例僅一筆，不支援多使用者。
+- **AISuggestion**：輸入難度＋風格 → 建議路線清單（含理由）。**session-only，不持久化至 Firestore。**
 
 ---
 
@@ -83,14 +84,15 @@
 |---|---|
 | SC-001 | 使用者可在 60 秒內完成一筆攀岩記錄 |
 | SC-002 | 儀表板在 500 筆資料下 2 秒內載入完成 |
-| SC-003 | Gemini 建議在正常網路下 5 秒內回傳 |
-| SC-004 | 90% 使用者無需協助即可完成首次記錄 |
-| SC-005 | UI 色彩對比符合 WCAG 2.1 AA（正文最低 4.5:1） |
+| SC-003 | Gemini 建議在網路延遲 ≤100ms、頻寬 ≥10Mbps 條件下 5 秒內回傳 |
+| SC-004 | 90% 使用者無需協助即可完成首次記錄（量測方式：5 位參與者非引導式可用性測試，成功定義為無需外部協助完成表單送出） |
+| SC-005 | UI 色彩對比符合 WCAG 2.1 AA（正文、按鈕、輸入框標籤最低 4.5:1） |
 | SC-006 | 所有樣式使用外部 CSS，禁止 inline style |
 
 ## 假設與限制
 
-- v1 為單一使用者，無帳號系統（或使用 Google Auth）。
+- v1 為單一使用者，**無帳號系統（Firebase Auth 不在 v1 範圍內）**。
 - 現代化 Web 介面，支援桌面與行動裝置瀏覽器。
 - 支援難度格式：V-scale（抱石）、YDS（運動攀岩／傳統攀岩）。
-- AI 邏輯透過 Agent DevelopKit 或 Semantic Kernel JS 協調。
+- Gemini API key 透過環境變數 `VITE_GEMINI_API_KEY` 提供（設定於 `.env.local`，git-ignored）。
+- v1 不支援攀岩記錄的編輯或刪除功能（out of scope）。
