@@ -33,12 +33,12 @@
 ## Phase 3: US1 — 記錄攀岩（P1）
 **目標**: 使用者可透過表單記錄攀岩資料並存入 Firestore，同時顯示於歷史清單。
 
-- [ ] T012 Implement `src/climbs/climbsRepository.ts`: Firestore-backed `insert` and `findAll`
-- [ ] T013 Implement `src/climbs/climbsService.ts`: Business logic for climb validation and persistence
-- [ ] T014 [P] Write Vitest unit tests for `climbsService.ts`
-- [ ] T015 Implement `src/climbs/ClimbForm.tsx`: React form with validation and loading states
-- [ ] T016 Implement `src/climbs/ClimbList.tsx`: Responsive list with Firestore real-time or fetch updates
-- [ ] T017 [P] Integration test: Add a climb and verify it appears in the list
+- [x] T012 Implement `src/climbs/climbsRepository.ts`: Firestore-backed `insert` and `findAll`
+- [x] T013 Implement `src/climbs/climbsService.ts`: Business logic for climb validation and persistence
+- [x] T014 [P] Write Vitest unit tests for `climbsService.ts`
+- [x] T015 Implement `src/climbs/ClimbForm.tsx`: React form with validation and loading states
+- [x] T016 Implement `src/climbs/ClimbList.tsx`: Responsive list with Firestore real-time or fetch updates
+- [x] T017 [P] Integration test: Add a climb and verify it appears in the list
 
 **檢查點**: 完成 US1 的獨立測試（Given 首頁 -> 填寫表單 -> 顯示於清單）。
 ---
