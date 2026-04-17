@@ -6,8 +6,14 @@ import { classifyGrade } from '@/shared/gradeUtils';
 export const climbsService = {
   async addClimb(input: ClimbInput): Promise<Climb> {
     // 1. 驗證必填欄位
-    if (!input.routeName.trim() || !input.grade.trim() || !input.date) {
-      throw new Error('請填寫所有必填欄位');
+    const errors: Record<string, string> = {};
+    if (!input.routeName?.trim()) errors.routeName = 'required';
+    if (!input.grade?.trim()) errors.grade = 'required';
+    if (!input.date) errors.date = 'required';
+    if (!input.result) errors.result = 'required';
+    if (Object.keys(errors).length > 0) {
+      const err = Object.assign(new Error('請填寫所有必填欄位'), { errors });
+      throw err;
     }
 
     // 2. 難度分類
