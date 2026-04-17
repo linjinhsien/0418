@@ -21,11 +21,11 @@
 
 ## Phase 2: Foundational（基礎建設與 US 共通任務）
 **目的**: 建立資料庫連線、國際化與共通工具
-- [ ] T007 Implement `src/shared/firebase.ts`: Initialize Firebase App and Firestore with `solar-curve-490711-p4` config
-- [ ] T008 Implement `src/shared/db.ts`: Create `FirestoreDB` implementation to handle `climbs` and `user_profile` collections
-- [ ] T009 Implement `src/shared/gradeUtils.ts`: Port `classifyGrade` logic for V-scale and YDS verification
-- [ ] T010 [P] Configure i18n in `src/shared/i18n/`: Set up `zh-TW` as default with Taiwan terminology (憲章合致)
-- [ ] T011 [P] Define core types in `src/climbs/types.ts`: `Climb` and `ClimbInput` interfaces
+- [x] T007 Implement `src/shared/firebase.ts`: Initialize Firebase App and Firestore with `solar-curve-490711-p4` config
+- [x] T008 Implement `src/shared/db.ts`: Create `FirestoreDB` implementation to handle `climbs` and `user_profile` collections
+- [x] T009 Implement `src/shared/gradeUtils.ts`: Port `classifyGrade` logic for V-scale and YDS verification
+- [x] T010 [P] Configure i18n in `src/shared/i18n/`: Set up `zh-TW` as default with Taiwan terminology (憲章合致)
+- [x] T011 [P] Define core types in `src/climbs/types.ts`: `Climb` and `ClimbInput` interfaces
 
 **檢查點**: `npm run test src/shared` 全部通過。
 ---
