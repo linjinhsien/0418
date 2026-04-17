@@ -34,6 +34,20 @@ Auto-generated from feature plans. Last updated: 2026-04-17T03:18:00+08:00
 | Variable | Required | Notes |
 |----------|----------|-------|
 | `VITE_GEMINI_API_KEY` | Yes | Set in `.env.local` (git-ignored) |
+| `FELO_API_KEY` | Yes | Required for Felo Search skill (git-ignored) |
+
+## Felo Search Configuration
+
+- **Script Path**: `.gemini/skills/felo-search/scripts/felo_search.cjs`
+- **Key Note**: 2026-04-17 Fixed JSON parsing to handle `data.data` nested structure and `res.link` mapping.
+
+## AI Agent Implementation Guidelines (2026)
+
+- **Backend Integration**: Prefer **Vertex AI for Firebase** over client-side direct calls to protect API keys.
+- **Structured Output**: Always set `responseMimeType: "application/json"` in `generationConfig`.
+- **Function Calling**: Use Gemini 2.0 Flash's function calling for dynamic data retrieval (e.g., `get_climb_history`).
+- **Performance**: Implement **Streaming** for long responses to maintain SC-003 < 5s target.
+- **Security**: Enable **Firebase App Check** for all Gemini API endpoints.
 
 ## Actual Project Structure
 
