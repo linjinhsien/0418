@@ -1,46 +1,39 @@
 import { v4 as uuidv4 } from 'uuid';
-import { GradeUtils } from '@/shared/gradeUtils';
-import { climbsRepository } from './climbsRepository';
 import { Climb, ClimbInput } from './types';
-
-export type ValidationErrors = Partial<Record<keyof ClimbInput, string>>;
-
-function validate(input: ClimbInput): ValidationErrors {
-  const errors: ValidationErrors = {};
-  if (!input.routeName?.trim()) errors.routeName = 'required';
-  if (!input.grade?.trim()) errors.grade = 'required';
-  if (!input.date?.trim()) errors.date = 'required';
-  if (!input.result) errors.result = 'required';
-  return errors;
-}
+import { climbsRepository } from './climbsRepository';
+import { classifyGrade } from '@/shared/gradeUtils';
 
 export const climbsService = {
   async addClimb(input: ClimbInput): Promise<Climb> {
-    const errors = validate(input);
-    if (Object.keys(errors).length > 0) {
-      throw Object.assign(new Error('Validation failed'), { errors });
+    // 1. 驗證必填欄位
+    if (!input.routeName.trim() || !input.grade.trim() || !input.date) {
+      throw new Error('請填寫所有必填欄位');
     }
 
-    const { gradeSystem, gradeWarning } = GradeUtils.classify(input.grade);
+    // 2. 難度分類
+    const { gradeSystem, gradeWarning } = classifyGrade(input.grade);
 
+    // 3. 建立完整的 Climb 物件
     const climb: Climb = {
       id: uuidv4(),
-      routeName: input.routeName.trim(),
-      grade: input.grade.trim(),
+      routeName: input.routeName,
+      grade: input.grade,
       gradeSystem,
       gradeWarning,
       date: input.date,
-      location: input.location?.trim() || undefined,
+      location: input.location,
       result: input.result,
-      notes: input.notes?.trim() || undefined,
+      notes: input.notes,
       createdAt: new Date().toISOString(),
     };
 
+    // 4. 持久化至 Firestore (透過 Repository)
     await climbsRepository.insert(climb);
+    
     return climb;
   },
 
   async getClimbs(): Promise<Climb[]> {
-    return climbsRepository.findAll();
-  },
+    return await climbsRepository.findAll();
+  }
 };
