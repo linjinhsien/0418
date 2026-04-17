@@ -42,10 +42,12 @@ Auto-generated from feature plans. Last updated: 2026-04-17T03:18:00+08:00
 - **Key Note**: 2026-04-17 Fixed JSON parsing to handle `data.data` nested structure and `res.link` mapping.
 | AI | @google/generative-ai | Gemini 3.0 Flash (2.0-flash experimental) |
 | Search | Felo Search API | V2 (Optimized) |
+| Maps | @vis.gl/react-google-maps | 2026 Recommended |
 | Orchestration | Semantic Kernel / AgentDevelopKit | 2026 Core |
 
 ## AI Agent Implementation Guidelines (2026)
 
+- **Geo-Awareness**: Use **Google Maps API** for precise gym location tagging and distance-based route suggestions.
 - **Orchestration**: Prefer **Semantic Kernel** for managing complex goal-oriented tasks.
 - **Development Kit**: Use **AgentDevelopKit** standard patterns for agent personality and memory management.
 - **Backend Integration**: Prefer **Vertex AI for Firebase** over client-side direct calls to protect API keys.
