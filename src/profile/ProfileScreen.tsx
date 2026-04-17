@@ -1,79 +1,63 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { profileRepository, UserProfile } from './profileRepository';
-import { t } from '@/shared/i18n';
+import { Save, Loader2 } from 'lucide-react';
+
+type ProfileForm = Omit<UserProfile, 'id'>;
 
 export default function ProfileScreen() {
-  const [profile, setProfile] = useState<Omit<UserProfile, 'id'>>({
-    name: '',
-    homeGym: '',
-    climbingSince: '',
-    goals: '',
-  });
+  const { t } = useTranslation();
+  const [form, setForm] = useState<ProfileForm>({ name: '', homeGym: '', climbingSince: '', goals: '' });
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    profileRepository.get().then((p) => {
-      if (p) setProfile({ name: p.name ?? '', homeGym: p.homeGym ?? '', climbingSince: p.climbingSince ?? '', goals: p.goals ?? '' });
-    });
+    profileRepository.get().then(p => { if (p) setForm({ name: p.name ?? '', homeGym: p.homeGym ?? '', climbingSince: p.climbingSince ?? '', goals: p.goals ?? '' }); });
   }, []);
 
-  async function handleSave() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
     setSaving(true);
-    try {
-      await profileRepository.save({ id: 'singleton', ...profile });
-    } catch (err) {
-      Alert.alert(t('common.error'), String(err));
-    } finally {
-      setSaving(false);
-    }
+    await profileRepository.save({ id: 'singleton', ...form });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   }
 
+  const fields: { key: keyof ProfileForm; label: string; type?: string }[] = [
+    { key: 'name', label: t('profile.name') },
+    { key: 'homeGym', label: t('profile.homeGym') },
+    { key: 'climbingSince', label: t('profile.climbingSince'), type: 'date' },
+    { key: 'goals', label: t('profile.goals') },
+  ];
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{t('profile.title')}</Text>
+    <div className="max-w-lg mx-auto space-y-6">
+      <h1 className="text-3xl font-bold">{t('profile.title')}</h1>
 
-      {(['name', 'homeGym', 'climbingSince', 'goals'] as const).map((field) => (
-        <React.Fragment key={field}>
-          <Text style={styles.label}>{t(`profile.${field}`)}</Text>
-          <TextInput
-            style={styles.input}
-            value={profile[field] ?? ''}
-            onChangeText={(v) => setProfile((prev) => ({ ...prev, [field]: v }))}
-            placeholder={t(`profile.${field}`)}
-            accessibilityLabel={t(`profile.${field}`)}
-            multiline={field === 'goals'}
-          />
-        </React.Fragment>
-      ))}
+      <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+        {fields.map(({ key, label, type }) => (
+          <div key={key}>
+            <label className="block text-sm text-slate-400 mb-1">{label}</label>
+            <input
+              type={type ?? 'text'}
+              value={form[key] ?? ''}
+              onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+              placeholder={label}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
+            />
+          </div>
+        ))}
 
-      <TouchableOpacity
-        style={[styles.button, saving && styles.buttonDisabled]}
-        onPress={handleSave}
-        disabled={saving}
-        accessibilityRole="button"
-      >
-        <Text style={styles.buttonText}>
-          {saving ? t('common.loading') : t('profile.save')}
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <button
+          type="submit"
+          disabled={saving}
+          className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {saved ? '✓ 已儲存' : t('profile.save')}
+        </button>
+      </form>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 16, paddingBottom: 40 },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: '600', marginTop: 12, marginBottom: 4 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, fontSize: 16 },
-  button: { marginTop: 24, backgroundColor: '#2563eb', borderRadius: 8, padding: 14, alignItems: 'center' },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-});
