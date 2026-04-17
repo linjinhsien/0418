@@ -94,3 +94,88 @@ A climber wants personalized route suggestions based on their current level and 
 - Authentication/accounts are out of scope for v1 (single user, local data).
 - Gemini API key is provided via environment configuration.
 - Grade formats supported: V-scale (bouldering) and YDS (sport/trad) for v1.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Expo CLI: `npm install -g expo-cli`
+- [Expo Go](https://expo.dev/go) app on your phone (easiest), or iOS Simulator / Android Emulator
+
+### Run
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Set your Gemini API key
+echo "EXPO_PUBLIC_GEMINI_API_KEY=your_key_here" > .env.local
+
+# 3. Start the dev server
+npx expo start
+```
+
+Then press `i` (iOS), `a` (Android), or scan the QR code with Expo Go.
+
+Get a Gemini API key at [aistudio.google.com](https://aistudio.google.com).
+
+### Tests
+
+```bash
+npx jest
+```
+
+
+---
+
+## Speckit Workflow
+
+This project uses [speckit](https://github.com/speckit) for AI-assisted specification and implementation. Available commands:
+
+| Command | Description |
+|---|---|
+| `speckit.specify` | Create or update the feature specification |
+| `speckit.clarify` | Clarify ambiguous requirements interactively |
+| `speckit.analyze` | Cross-artifact consistency and quality analysis |
+| `speckit.constitution` | Generate or update the project architecture constitution |
+| `speckit.plan` | Generate implementation plan, research, and data model |
+| `speckit.tasks` | Generate dependency-ordered task list from the plan |
+| `speckit.implement` | Execute the task list and implement the feature |
+| `speckit.checklist` | Generate a requirements quality checklist |
+| `speckit.taskstoissues` | Convert tasks to GitHub issues (requires GitHub MCP) |
+
+### speckit.checklist
+
+Generates a "unit test for requirements" — validates the quality, clarity, and completeness of the spec rather than the implementation.
+
+**Q1 — Focus area**
+
+| Option | Focus | Why It Matters |
+|--------|-------|----------------|
+| A | Requirements completeness & clarity (spec.md quality) | Validates FR/SC coverage, ambiguities, edge cases |
+| B | AI / Gemini integration requirements | High-risk external dependency with error states |
+| C | Data integrity & offline resilience requirements | SQLite, grade validation, offline behaviour |
+| D | Localisation & accessibility requirements | zh-TW mandate + WCAG 2.1 AA in constitution |
+| E | All of the above (comprehensive) | Full pre-implementation gate |
+
+**Q2 — Depth & audience**
+
+| Option | Depth | Audience |
+|--------|-------|----------|
+| A | Lightweight (quick author self-check, ~15 items) | Author before PR |
+| B | Standard (thorough reviewer gate, ~30 items) | Peer reviewer / PR |
+| C | Formal (release gate, ~40+ items) | QA / release sign-off |
+
+**Q3 — Scope boundary**
+
+Should the checklist include items for `.kiro/specs/climber-app/requirements.md` (the more detailed authoritative doc) in addition to `specs/001-climber-app/spec.md`, or stay limited to the `specs/` artifacts only?
+
+| Option | Scope |
+|--------|-------|
+| A | `specs/` artifacts only |
+| B | Both `specs/` and `.kiro/specs/` |
+
+Checklists are saved to `specs/001-climber-app/checklists/` (e.g., `ux.md`, `security.md`, `api.md`).

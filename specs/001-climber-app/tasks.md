@@ -1,40 +1,85 @@
-# Tasks: Climber App
-
+# Tasks: 攀岩夥伴應用程式
 **Input**: Design documents from `/specs/001-climber-app/`
-**Prerequisites**: plan.md ✓, spec.md ✓
+**Prerequisites**: plan.md (v1.2.0), spec.md, research.md, data-model.md
 **Branch**: `001-climber-app`
 
-## Format: `[ID] [P?] [Story] Description`
+## 任務清單格式：`[ID] [P?] [Story] 描述`
 
 ---
 
-## Maintenance
+## Phase 1: Setup（專案初始化）
+**目的**: 初始化 Vite + React 環境並安裝核心相依套件
+- [ ] T001 Initialize Vite React project with TypeScript (已完成)
+- [ ] T002 Install core dependencies: `firebase`, `@google/generative-ai`, `recharts`, `lucide-react`, `framer-motion`, `clsx`, `tailwind-merge`, `react-i18next`, `i18next`, `uuid`
+- [ ] T003 Install dev dependencies: `vitest`, `@testing-library/react`, `@vitejs/plugin-react`, `jsdom`
+- [ ] T004 Organize directory structure: `src/climbs/`, `src/dashboard/`, `src/suggestions/`, `src/profile/`, `src/shared/`, `src/components/`
+- [ ] T005 [P] Configure Vitest in `vite.config.ts`
+- [ ] T006 [P] Configure TypeScript strict mode and paths in `tsconfig.json`
 
-### [M-001] [DONE] Repo Cleanup — Remove redundant nested repo
+**檢查點**: `npm run dev` 可正常啟動且 `npm run test` 可執行。
+---
 
-**Date**: 2026-04-15T02:38:22+08:00  
-**Action**: Deleted `/home/iven840320/0418/0418/` — a nested, redundant git repository containing only a placeholder `README.md` (6 bytes). It had no source code, no spec files, and no relation to the Climber app feature.  
-**Why**: Violated project structure defined in `plan.md`. Nested `.git` repos cause confusion and are not part of the `001-climber-app` feature scope.  
-**Files removed**: `0418/0418/README.md`, `0418/0418/.git/`  
-**Verified**: Branch `001-climber-app` active. `specs/001-climber-app/` intact with `spec.md` and `plan.md`.
+## Phase 2: Foundational（基礎建設與 US 共通任務）
+**目的**: 建立資料庫連線、國際化與共通工具
+- [ ] T007 Implement `src/shared/firebase.ts`: Initialize Firebase App and Firestore with `solar-curve-490711-p4` config
+- [ ] T008 Implement `src/shared/db.ts`: Create `FirestoreDB` implementation to handle `climbs` and `user_profile` collections
+- [ ] T009 Implement `src/shared/gradeUtils.ts`: Port `classifyGrade` logic for V-scale and YDS verification
+- [ ] T010 [P] Configure i18n in `src/shared/i18n/`: Set up `zh-TW` as default with Taiwan terminology (憲章合致)
+- [ ] T011 [P] Define core types in `src/climbs/types.ts`: `Climb` and `ClimbInput` interfaces
+
+**檢查點**: `npm run test src/shared` 全部通過。
+---
+
+## Phase 3: US1 — 記錄攀岩（P1）
+**目標**: 使用者可透過表單記錄攀岩資料並存入 Firestore，同時顯示於歷史清單。
+
+- [ ] T012 Implement `src/climbs/climbsRepository.ts`: Firestore-backed `insert` and `findAll`
+- [ ] T013 Implement `src/climbs/climbsService.ts`: Business logic for climb validation and persistence
+- [ ] T014 [P] Write Vitest unit tests for `climbsService.ts`
+- [ ] T015 Implement `src/climbs/ClimbForm.tsx`: React form with validation and loading states
+- [ ] T016 Implement `src/climbs/ClimbList.tsx`: Responsive list with Firestore real-time or fetch updates
+- [ ] T017 [P] Integration test: Add a climb and verify it appears in the list
+
+**檢查點**: 完成 US1 的獨立測試（Given 首頁 -> 填寫表單 -> 顯示於清單）。
+---
+
+## Phase 4: US2 — 進度儀表板（P2）
+**目標**: 將 Firestore 資料聚合並透過 Recharts 渲染難度趨勢與成功率。
+
+- [ ] T018 Implement `src/dashboard/statsAggregator.ts`: Pure function to compute stats from climb list
+- [ ] T019 [P] Write unit tests for stats calculation logic
+- [ ] T020 Implement `src/dashboard/Dashboard.tsx`: Render LineChart and PieChart using Recharts
+- [ ] T021 Handle empty states and loading indicators for charts
+
+**檢查點**: 匯入樣本資料後，儀表板可正確顯示圖表。
+---
+
+## Phase 5: US3 — AI 路線建議（P3）
+**目標**: 整合 Gemini 3.0 Flash 產生建議，並優雅處理錯誤與離線狀態。
+
+- [ ] T022 Implement `src/suggestions/geminiClient.ts`: SDK wrapper for Gemini 3.0 Flash
+- [ ] T023 Implement `src/suggestions/suggestionsService.ts`: Context construction and error handling
+- [ ] T024 Implement `src/suggestions/SuggestionsScreen.tsx`: AI Input form and suggestion display cards
+- [ ] T025 [P] Implement error banners for API failures and offline mode
+
+**檢查點**: 模擬 API 呼叫可正確顯示建議內容與錯誤處理。
+---
+
+## Phase 6: 使用者資料與最終修飾
+**目標**: 管理個人化設定並進行最後的技術棧清理與優化。
+
+- [ ] T026 Implement `src/profile/profileRepository.ts`: Manage `user_profile/singleton` in Firestore
+- [ ] T027 Implement `src/profile/ProfileScreen.tsx`: Profile editing UI
+- [ ] T028 [P] Final navigation setup using `src/components/Navigation.tsx`
+- [ ] T029 [P] Accessibility audit: Verify WCAG 2.1 AA contrast
+- [ ] T030 Final cleanup: Remove all unused Expo/Native dependencies and files
+
+**檢查點**: 完整 App 可運行；所有測試通過；TypeScript 無錯誤。
 
 ---
 
-## User Story 1 — Log a Climb (P1)
+## 依賴關係與執行順序
 
-- [ ] T-001 [US1] Create `ClimbEntry` TypeScript interface in `src/models/climb.ts`
-- [ ] T-002 [US1] Implement `StorageService` (localStorage) in `src/services/storage.ts`
-- [ ] T-003 [US1] Build `LogForm` component in `src/components/LogForm.js` with validation (FR-001, FR-005)
-- [ ] T-004 [US1] Build `ClimbHistory` list component in `src/components/ClimbHistory.js` sorted by date desc (FR-002)
-
-## User Story 2 — Progress Dashboard (P2)
-
-- [ ] T-005 [P] [US2] Integrate Chart.js for grade trend chart in `src/components/Dashboard.js` (FR-003)
-- [ ] T-006 [P] [US2] Add success rate calculation and display per grade
-- [ ] T-007 [P] [US2] Add empty state UI when no climbs logged
-
-## User Story 3 — AI Route Suggestions (P3)
-
-- [ ] T-008 [US3] Implement `GeminiService` in `src/services/gemini.js` with prompt template (FR-004)
-- [ ] T-009 [US3] Build `AIBox` component in `src/components/AIBox.js` with error handling + retry (FR-006)
-- [ ] T-010 [US3] Add offline/no-history guard before calling Gemini API
+1. **Phase 1 & 2** 是所有功能的基礎，必須優先完成。
+2. **Phase 3 (US1)** 是 MVP 核心，完成後可進行初步部署。
+3. **Phase 4 & 5** 可根據優先序並行開發。

@@ -1,0 +1,62 @@
+description = "Generate a daily progress report from git activity and spec/plan/tasks files."
+
+prompt = """
+
+## User Input
+
+```text
+{{args}}
+```
+
+Use the user input (if provided) as additional context or a specific date to report on. Default to today.
+
+## Outline
+
+Generate a daily progress report by doing the following:
+
+1. **Gather git activity**:
+   - Run `git log --since="midnight" --until="now" --oneline --all` to get today's commits
+   - Run `git diff --stat HEAD~1 HEAD 2>/dev/null || git diff --stat` to see changed files
+   - Run `git branch --show-current` to get the active branch
+   - Run `git status --short` to see any uncommitted changes
+
+2. **Gather spec context**:
+   - Check `.specify/feature.json` for the current feature directory
+   - If found, read `<feature_dir>/spec.md`, `<feature_dir>/plan.md`, and `<feature_dir>/tasks.md` (skip any that don't exist)
+   - Extract: feature name, in-progress tasks, completed tasks, blocked items
+
+3. **Compose the report** using this structure:
+
+   ```markdown
+   # Daily Report — [DATE]
+
+   **Branch**: [current branch]
+   **Feature**: [feature name from spec, or "N/A"]
+
+   ## What Was Done Today
+
+   - [Summarize commits and file changes in plain language, grouped by theme]
+   - [If no commits: "No commits today"]
+
+   ## Tasks Status
+
+   | Status | Task |
+   |--------|------|
+   | ✅ Done | [completed tasks from tasks.md or inferred from commits] |
+   | 🔄 In Progress | [in-progress tasks] |
+   | ⏳ Pending | [not started tasks] |
+   | ❌ Blocked | [blocked items if any] |
+
+   ## Uncommitted Changes
+
+   - [List files with uncommitted changes, or "None"]
+
+   ## Next Steps
+
+   - [Suggest 2-3 logical next actions based on plan.md or task list]
+   ```
+
+4. **Output the report** directly in the chat. Do not write it to a file unless the user asks.
+
+5. If the user provided a date or extra context in `{{args}}`, adjust the git log date range and report header accordingly.
+"""

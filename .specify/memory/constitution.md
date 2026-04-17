@@ -1,39 +1,60 @@
+<!--
+SYNC IMPACT REPORT
+==================
+Version change: 1.1.0 → 1.2.0 (MINOR — Migrated from React Native to React (Web), updated AI to Gemini 3.0, integrated GCP backend, and added Agent DevelopKit/Semantic Kernel JS as orchestration options)
+
+Modified principles:
+  - I. AI-First          → Updated AI model to Gemini 3.0
+  - II. Modern Web UX    → Changed from Mobile-First Native to Modern Web (React)
+  - III. Data Integrity  → Updated from local storage to GCP (Firestore)
+  - IV. Testability & Documentation → unchanged
+
+Added sections:
+  - Integration with GCP and AI Orchestration layers
+
+Templates reviewed:
+  ✅ .specify/templates/* updated to reflect React-based structure
+
+Follow-up TODOs:
+  - Initialize Vite React project
+  - Configure GCP project access
+-->
+
 # Climber — Project Constitution
 
 ## Vision
-A climbing companion app built with AI Studio (Gemini), helping climbers track routes, progress, and goals.
+
+A climbing companion app built with Google Gemini 3.0 and React, helping climbers track routes, progress, and goals. The app is a modern web application leveraging Google Cloud Platform (GCP) for backend services, providing robust data persistence and intelligent features.
 
 ## Core Principles
 
 ### I. AI-First
-Leverage Gemini for intelligent route suggestions and progress analysis. AI should feel integrated, not bolted on.
 
-### II. Simple UX (Mobile-First)
-Fast, intuitive interface focused on the climber's workflow. Minimal taps to log a climb.
+Gemini 3.0 (Flash) MUST be the primary intelligence layer. We leverage orchestration tools like Agent DevelopKit or Semantic Kernel JS to manage complex AI workflows. AI features MUST be seamlessly integrated into the React frontend.
 
-### III. Data Integrity
-Accurate tracking of climbs, grades, and performance over time. Ensure data persistence and validation.
+### II. Modern Web UX
+
+The interface MUST be built with React and modern CSS, ensuring a premium, responsive experience across all devices. We prioritize "rich aesthetics" and "visual excellence" to provide a top-tier user experience.
+
+### III. Data Integrity & GCP Integration
+
+All climb entries MUST be validated and stored securely in a GCP-managed backend (e.g., Firestore). We move away from pure local storage to a cloud-synced model to ensure data persistence across devices.
 
 ### IV. Testability & Documentation
-Every feature must be independently testable. Core logic must be documented in code and specs.
+
+The codebase MUST maintain high test coverage using Vitest. Comprehensive documentation in both English and Traditional Chinese (zh-TW) is mandatory for all major features and services.
 
 ## Quality Standards
-- Code must be readable and well-commented.
-- UI must be accessible (WCAG 2.1 AA).
-- Performance: Initial load under 3s.
-- Error handling: Graceful failures for external APIs (Gemini).
 
-## Governance
-- This constitution supersedes all other development practices.
-- PRs must verify compliance with these principles.
+- Code MUST be readable, typed (TypeScript), and well-commented.
+- UI MUST meet WCAG 2.1 AA accessibility standards.
+- Performance: Initial load < 2s; AI responses < 5s.
+- Infrastructure: All backend services MUST reside within GCP.
 
-**Version**: 1.0.0 | **Ratified**: 2026-04-14
+## Language Standards
 
----
-
-## 語言規範 #zhtw
-
-預設使用**正體中文**回應，並遵守以下台灣慣用詞彙：
+Responses, documentation, and in-app copy default to **正體中文 (Traditional Chinese)**
+using Taiwan conventions. The following vocabulary MUST be applied consistently:
 
 | ❌ 避免（中國大陸用語） | ✅ 使用（台灣正體） |
 |---|---|
@@ -86,4 +107,13 @@ Every feature must be independently testable. Core logic must be documented in c
 | 軟件 | 軟體 |
 | 應用程序 | 應用程式 |
 
-**參考來源**: https://gist.github.com/doggy8088/579e8f89ccbaeccf0868fee886dd6ac1
+Reference: https://gist.github.com/doggy8088/579e8f89ccbaeccf0868fee886dd6ac1
+
+## Governance
+
+- This constitution supersedes all other development practices for this project.
+- Amendments require a version bump and propagation to all `speckit` templates.
+- Versioning policy:
+  at time of authoring.
+
+**Version**: 1.2.0 | **Ratified**: 2026-04-14 | **Last Amended**: 2026-04-17

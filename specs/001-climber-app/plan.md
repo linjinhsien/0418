@@ -1,69 +1,90 @@
-# Implementation Plan: Climber App
+# 實作計畫：攀岩夥伴應用程式
 
-**Branch**: `001-climber-app` | **Date**: 2026-04-14 | **Spec**: [specs/001-climber-app/spec.md]
+**分支**：`001-climber-app` | **日期**：2026-04-17T10:00:00+08:00 | **規格**：[specs/001-climber-app/spec.md]
+**權威需求**：[.kiro/specs/climber-app/requirements.md]
 
-## Summary
-Climber is a mobile-first web application designed to help climbers log their climbs, track progress via a dashboard, and receive AI-powered route suggestions using Gemini. The implementation will focus on a clean, responsive UI and seamless integration with the Gemini API.
+## 摘要
 
-## Technical Context
+現代化 React (Vite) 攀岩記錄 Web 應用程式，整合 Gemini 3.0 Flash 與 GCP Firestore。
 
-| Category | Decision | Reason |
+## 技術棧
+
+| 類別 | 選型 | 說明 |
 |---|---|---|
-| Language | TypeScript 5.x | Type safety for climb data models |
-| Bundler | **Vite 5** | Fast HMR, native ESM, minimal config |
-| UI Framework | **React 18** | Component model fits LogForm / Dashboard / AIBox |
-| State Management | **Zustand** | Lightweight, no boilerplate; fits single-user local-only v1 |
-| Routing | **React Router v6** | Simple 3-page app (Home / Dashboard / AI) |
-| Charts | **Chart.js 4** + react-chartjs-2 | Grade trend + success rate charts |
-| AI | **@google/generative-ai** (Gemini SDK) | Official SDK, streaming support |
-| Storage | **localStorage** (v1) | Simple JSON persistence; IndexedDB upgrade path noted |
-| Styling | CSS Modules + `src/styles/theme.css` | No runtime CSS-in-JS overhead |
-| Testing | **Vitest** + Testing Library | Co-located with Vite, fast unit tests |
-| Target Platform | Mobile Web (Responsive, 375px+) | Desktop secondary |
-| Constraints | Client-side only, PWA-ready | No backend for v1 |
-| Env Config | `NANOBANANA_API_KEY` via `~/.gemini/.env` (global) | Not stored in project `.env` |
+| 語言 | TypeScript 5.x | 資料模型型別安全 |
+| 框架 | **React** (Vite) | 現代化 Web 應用程式 |
+| AI | **Gemini 3.0 (Flash)** | 官方 SDK (@google/generative-ai) |
+| 協作 | **Agent DevelopKit / Semantic Kernel JS** | AI 邏輯協調與編排 |
+| 後端 | **GCP Firestore** | Firebase 託管 NoSQL 資料庫 |
+| 狀態管理 | **Context API / Zustand** | v1 狀態管理 |
+| 圖表 | **Recharts** | Web 原生圖表，支援難度趨勢與成功率 |
+| 樣式 | **Vanilla CSS / Tailwind** | 支援 Rich Aesthetics 與動態設計 |
+| 測試 | **Vitest** | 單元測試與元件測試 |
 
-## Constitution Check
+## 憲章檢核
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+- [x] **AI 優先**：Gemini 3.0 整合為核心功能
+- [x] **現代 Web UX**：React 元件，提供 Premium 視覺體驗
+- [x] **資料完整性**：GCP Firestore 持久化，ClimbEntry 驗證
+- [x] **可測試性**：Vitest 測試，Gemini mock 支援
+- [x] **語言標準**：zh-TW 為預設語系
 
-- [x] **AI-First**: Gemini integration is a core feature (US3).
-- [x] **Simple UX**: Mobile-first responsive design planned.
-- [x] **Data Integrity**: Schema defined for climb logging; validation required.
-- [x] **Testability**: Vitest planned for unit and integration tests.
+## 目錄結構 (Web-optimized)
 
-## Project Structure
-
-### Documentation (this feature)
-
-```text
-specs/001-climber-app/
-├── plan.md              # This file
-├── research.md          # Gemini API integration & Local Storage best practices
-├── data-model.md        # Climb and UserProfile schemas
-├── quickstart.md        # Setup and local dev instructions
-└── tasks.md             # Implementation task list
 ```
-
-### Source Code (repository root)
-
-```text
 src/
-├── components/          # UI Components (LogForm, Dashboard, AIBox)
-├── services/            # GeminiService, StorageService
-├── models/              # TypeScript interfaces
-├── styles/              # theme.css and component styles
-└── index.html           # Entry point
+├── climbs/
+│   ├── ClimbForm.tsx
+│   ├── ClimbList.tsx
+│   └── climbsService.ts
+├── dashboard/
+│   ├── Dashboard.tsx
+│   └── statsAggregator.ts
+├── suggestions/
+│   ├── SuggestionsScreen.tsx
+│   └── suggestionsService.ts
+├── profile/
+│   ├── ProfileScreen.tsx
+│   └── profileRepository.ts
+├── shared/
+│   ├── firebase.ts (GCP Firestore Config)
+│   ├── db.ts (Firestore Repository implementation)
+│   └── i18n/
+└── components/
+    ├── Navigation.tsx
+    └── Layout.tsx
 ```
 
-## Phase 0: Outline & Research
+## 實作階段
 
-1. **Research Task**: Gemini API authentication and prompt engineering for climbing suggestions.
-2. **Research Task**: Local storage vs IndexedDB for persisting structured JSON data on mobile web.
-3. **Research Task**: Mobile-responsive chart libraries (Chart.js vs Recharts).
+### Phase 0 — 研究與設定
+- Firebase Project 設定與 Firestore 安全規則
+- Gemini API 提示詞優化
+- Recharts 整合研究
 
-## Phase 1: Design & Contracts
+### Phase 1 — 資料模型與合約
+- 定義 `Climb`、`UserProfile` TypeScript 介面
+- 設計 Firestore 集合結構（`climbs`, `user_profile`）
 
-1. **Data Model**: Define `ClimbEntry` and `UserProfile` interfaces.
-2. **AI Contract**: Define the prompt template and response format for Gemini suggestions.
-3. **Agent Update**: Run `.specify/scripts/bash/update-agent-context.sh gemini`.
+### Phase 2 — 基礎建設
+- `firebase.ts` 與 `db.ts` 實作 (已初步整合)
+- `gradeUtils.ts`：V-scale / YDS 驗證邏輯
+- i18n 設定 (zh-TW)
+
+### Phase 3 — 核心功能 (US1)
+- `ClimbForm.tsx` 與 `ClimbList.tsx`
+- 串接 Firestore 進行資料讀取與儲存
+
+### Phase 4 — 儀表板 (US2)
+- 使用 Recharts 實作視覺化圖表
+
+### Phase 5 — AI 建議 (US3)
+- 整合 Gemini 3.0 Flash 推薦引擎
+
+### Phase 6 — 最終修飾
+- 樣式優化、無障礙稽核與生產環境部署
+
+## 非目標 (v1)
+- 多使用者帳號系統
+- 離線資料同步
+- 複雜的社群功能

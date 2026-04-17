@@ -1,0 +1,19 @@
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+
+const firebaseConfig = {
+  projectId: "solar-curve-490711-p4",
+  appId: "1:25381047689:web:4bbef3192eb920ad912558",
+  apiKey: "", // 注意：請確認是否需要補上 API Key
+  authDomain: "solar-curve-490711-p4.firebaseapp.com",
+  storageBucket: "solar-curve-490711-p4.firebasestorage.app",
+  messagingSenderId: "25381047689",
+  measurementId: ""
+};
+
+const app = initializeApp(firebaseConfig);
+
+// 使用您提供的特定 Database ID 或是 (default)
+const dbId = "ai-studio-b1efd353-fef4-4546-a539-038227947db6";
+export const db = getFirestore(app, dbId);
+export default app;
