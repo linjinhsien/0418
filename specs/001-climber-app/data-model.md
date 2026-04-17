@@ -1,7 +1,7 @@
 # 資料模型：攀岩夥伴應用程式
 
-**分支**：`001-climber-app` | **日期**：2026-04-16T23:42:22+08:00
-**產出自**：`speckit.plan` Phase 1
+**分支**：`001-climber-app` | **日期**：2026-04-17T03:20:00+08:00
+**產出自**：`speckit.plan` Phase 1 | **更新**：遷移至 Firebase Firestore
 
 ---
 
@@ -9,7 +9,7 @@
 
 ### Climb
 
-攀岩記錄的核心實體，對應 SQLite `climbs` 資料表。
+攀岩記錄的核心實體，儲存於 Firestore `climbs` 集合，每筆文件以 UUID 為 document ID。
 
 ```typescript
 // src/climbs/types.ts
@@ -40,7 +40,7 @@ export interface Climb {
 
 ### UserProfile
 
-單例使用者資料，對應 SQLite `user_profile` 資料表，主鍵固定為 `'singleton'`。
+單例使用者資料，儲存於 Firestore `userProfile/singleton` 文件，document ID 固定為 `'singleton'`。
 
 ```typescript
 // src/profile/types.ts
@@ -57,7 +57,7 @@ export interface UserProfile {
 
 ### AISuggestion
 
-Gemini API 回應的單筆建議，不持久化至 SQLite。
+Gemini API 回應的單筆建議，不持久化至 Firestore（session-only，僅存於記憶體）。
 
 ```typescript
 // src/suggestions/types.ts
@@ -83,40 +83,42 @@ export type SuggestionResult =
 
 ---
 
-## SQLite Schema
+## Firestore Schema
 
-### 遷移版本 1（初始 schema）
+### 集合：`climbs`
 
-```sql
--- schema_migrations（遷移版本追蹤）
-CREATE TABLE IF NOT EXISTS schema_migrations (
-  version INTEGER PRIMARY KEY,
-  applied_at TEXT NOT NULL
-);
+每筆文件對應一筆攀岩記錄，document ID 為 UUID。
 
--- climbs
-CREATE TABLE IF NOT EXISTS climbs (
-  id          TEXT PRIMARY KEY,
-  routeName   TEXT NOT NULL,
-  grade       TEXT NOT NULL,
-  gradeSystem TEXT NOT NULL DEFAULT 'unknown',
-  gradeWarning INTEGER NOT NULL DEFAULT 0,  -- 0 = false, 1 = true
-  date        TEXT NOT NULL,
-  location    TEXT,
-  result      TEXT NOT NULL,
-  notes       TEXT,
-  createdAt   TEXT NOT NULL
-);
-
--- user_profile（單例）
-CREATE TABLE IF NOT EXISTS user_profile (
-  id            TEXT PRIMARY KEY DEFAULT 'singleton',
-  name          TEXT,
-  homeGym       TEXT,
-  climbingSince TEXT,
-  goals         TEXT
-);
 ```
+climbs/{climbId}
+  id:           string   // UUID
+  routeName:    string   // 必填
+  grade:        string   // 必填，原始輸入
+  gradeSystem:  string   // 'v-scale' | 'yds' | 'unknown'
+  gradeWarning: boolean
+  date:         string   // ISO 8601 YYYY-MM-DD
+  location:     string?  // 選填
+  result:       string   // 'sent' | 'attempt'
+  notes:        string?  // 選填
+  createdAt:    string   // ISO 8601 timestamp
+```
+
+### 文件：`userProfile/singleton`
+
+單例文件，document ID 固定為 `singleton`。
+
+```
+userProfile/singleton
+  id:            'singleton'
+  name:          string?
+  homeGym:       string?
+  climbingSince: string?  // ISO 8601 date
+  goals:         string?
+```
+
+### AISuggestion（不持久化）
+
+AI 建議僅存於記憶體，不寫入任何 Firestore 集合。
 
 ---
 
@@ -251,5 +253,5 @@ Climb (many)
 
 **重要約束**：
 - `AISuggestion` 不持久化，僅存於記憶體
-- `StatsAggregator` 只讀，不寫入 `climbs` 資料表
-- `SuggestionsService` 不寫入任何 SQLite 資料表
+- `StatsAggregator` 只讀，不寫入 `climbs` 集合
+- `SuggestionsService` 不寫入任何 Firestore 集合
