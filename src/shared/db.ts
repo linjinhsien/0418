@@ -51,9 +51,10 @@ class FirestoreDB implements DB {
         gradeWarning: params[4],
         date: params[5],
         location: params[6],
-        result: params[7],
-        notes: params[8],
-        createdAt: params[9]
+        locationId: params[7],
+        result: params[8],
+        notes: params[9],
+        createdAt: params[10],
       };
       await setDoc(doc(firestore, 'climbs', climbId), data);
     } else if (sql.includes('INSERT INTO user_profile')) {
@@ -101,9 +102,10 @@ class LocalDB implements DB {
          gradeWarning: params[4],
          date: params[5],
          location: params[6],
-         result: params[7],
-         notes: params[8],
-         createdAt: params[9]
+         locationId: params[7],
+         result: params[8],
+         notes: params[9],
+         createdAt: params[10],
        };
        climbs.push(newClimb);
        localStorage.setItem('climbs', JSON.stringify(climbs));

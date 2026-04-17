@@ -1,5 +1,6 @@
 import { getGenerativeModel } from '@firebase/vertexai';
 import { vertexAI } from '@/shared/firebase';
+import { StreamChunkCallback } from './suggestionsService';
 
 const SYSTEM_INSTRUCTION =
   '你是一位專業攀岩教練助理。你的唯一職責是根據攀岩者的程度與風格偏好，推薦適合的攀岩路線。' +
@@ -8,16 +9,14 @@ const SYSTEM_INSTRUCTION =
 
 export interface GeminiClient {
   complete(userPrompt: string): Promise<string>;
+  completeStream(userPrompt: string, onChunk: StreamChunkCallback): Promise<string>;
 }
 
 export function createGeminiClient(): GeminiClient {
-  // 使用 Firebase Vertex AI SDK
   const model = getGenerativeModel(vertexAI, {
     model: 'gemini-2.0-flash',
     systemInstruction: { role: 'system', parts: [{ text: SYSTEM_INSTRUCTION }] },
-    generationConfig: {
-      responseMimeType: 'application/json',
-    },
+    generationConfig: { responseMimeType: 'application/json' },
   });
 
   return {
@@ -25,6 +24,18 @@ export function createGeminiClient(): GeminiClient {
       const result = await model.generateContent(userPrompt);
       return result.response.text();
     },
+
+    async completeStream(userPrompt: string, onChunk: StreamChunkCallback): Promise<string> {
+      const { stream } = await model.generateContentStream(userPrompt);
+      let full = '';
+      for await (const chunk of stream) {
+        const text = chunk.text();
+        if (text) {
+          full += text;
+          onChunk(text);
+        }
+      }
+      return full;
+    },
   };
 }
-
