@@ -68,11 +68,11 @@
 ## Phase 6: 使用者資料與最終修飾
 **目標**: 管理個人化設定並進行最後的技術棧清理與優化。
 
-- [ ] T026 Implement `src/profile/profileRepository.ts`: Manage `user_profile/singleton` in Firestore
-- [ ] T027 Implement `src/profile/ProfileScreen.tsx`: Profile editing UI
-- [ ] T028 [P] Final navigation setup using `src/components/Navigation.tsx`
-- [ ] T029 [P] Accessibility audit: Verify WCAG 2.1 AA contrast
-- [ ] T030 Final cleanup: Remove all unused Expo/Native dependencies and files
+- [x] T026 Implement `src/profile/profileRepository.ts`: Manage `user_profile/singleton` in Firestore
+- [x] T027 Implement `src/profile/ProfileScreen.tsx`: Profile editing UI
+- [x] T028 [P] Final navigation setup using `src/components/Navigation.tsx`
+- [x] T029 [P] Accessibility audit: Verify WCAG 2.1 AA contrast
+- [x] T030 Final cleanup: Remove all unused Expo/Native dependencies and files
 
 **檢查點**: 完整 App 可運行；所有測試通過；TypeScript 無錯誤。
 
