@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getGenerativeModel } from 'firebase/vertexai';
+import { vertexAI } from '@/shared/firebase';
 
 const SYSTEM_INSTRUCTION =
   '你是一位專業攀岩教練助理。你的唯一職責是根據攀岩者的程度與風格偏好，推薦適合的攀岩路線。' +
@@ -9,11 +10,14 @@ export interface GeminiClient {
   complete(userPrompt: string): Promise<string>;
 }
 
-export function createGeminiClient(apiKey: string): GeminiClient {
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
+export function createGeminiClient(): GeminiClient {
+  // 使用 Firebase Vertex AI SDK
+  const model = getGenerativeModel(vertexAI, {
     model: 'gemini-2.0-flash',
-    systemInstruction: SYSTEM_INSTRUCTION,
+    systemInstruction: { role: 'system', parts: [{ text: SYSTEM_INSTRUCTION }] },
+    generationConfig: {
+      responseMimeType: 'application/json',
+    },
   });
 
   return {
@@ -23,3 +27,4 @@ export function createGeminiClient(apiKey: string): GeminiClient {
     },
   };
 }
+

@@ -6,8 +6,7 @@ import { profileRepository } from '@/profile/profileRepository';
 import { Sparkles, AlertCircle, WifiOff, Loader2 } from 'lucide-react';
 
 const STYLES: ClimbingStyle[] = ['bouldering', 'sport', 'trad'];
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string ?? '';
-const suggestionsService = createSuggestionsService(createGeminiClient(apiKey));
+const suggestionsService = createSuggestionsService(createGeminiClient());
 
 export default function SuggestionsScreen() {
   const { t } = useTranslation();
