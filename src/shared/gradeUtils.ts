@@ -1,29 +1,35 @@
-export type GradeSystem = 'v-scale' | 'yds' | 'unknown';
+export type GradeSystem = 'V-scale' | 'YDS' | 'unknown';
 
 export interface GradeClassification {
   gradeSystem: GradeSystem;
   gradeWarning: boolean;
 }
 
-const V_SCALE = /^V([0-9]|1[0-7]|B)$/i;
-const YDS = /^5\.(([0-9])|1[0-5][abcd]?)$/i;
+/**
+ * 根據難度字串判斷其所屬系統 (V-scale 或 YDS)
+ * V-scale: V0, V1, ..., V17, VB
+ * YDS: 5.0, 5.1, ..., 5.15a/b/c/d
+ */
+export function classifyGrade(grade: string): GradeClassification {
+  const vScaleRegex = /^V([0-9]|1[0-7]|B)$/i;
+  const ydsRegex = /^5\.(([0-9])|1[0-5][abcd]?)$/i;
 
-export const GradeUtils = {
-  isVScale(grade: string): boolean {
-    return V_SCALE.test(grade);
-  },
+  if (vScaleRegex.test(grade)) {
+    return {
+      gradeSystem: 'V-scale',
+      gradeWarning: false,
+    };
+  }
 
-  isYDS(grade: string): boolean {
-    return YDS.test(grade);
-  },
+  if (ydsRegex.test(grade)) {
+    return {
+      gradeSystem: 'YDS',
+      gradeWarning: false,
+    };
+  }
 
-  classify(grade: string): GradeClassification {
-    if (GradeUtils.isVScale(grade)) {
-      return { gradeSystem: 'v-scale', gradeWarning: false };
-    }
-    if (GradeUtils.isYDS(grade)) {
-      return { gradeSystem: 'yds', gradeWarning: false };
-    }
-    return { gradeSystem: 'unknown', gradeWarning: true };
-  },
-};
+  return {
+    gradeSystem: 'unknown',
+    gradeWarning: true,
+  };
+}
