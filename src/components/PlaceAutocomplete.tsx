@@ -3,7 +3,7 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { MapPin } from 'lucide-react';
 
 interface Props {
-  onPlaceSelect: (placeName: string) => void;
+  onPlaceSelect: (placeName: string, placeId?: string) => void;
   defaultValue?: string;
   placeholder?: string;
 }
@@ -17,7 +17,7 @@ export const PlaceAutocomplete = ({ onPlaceSelect, defaultValue = '', placeholde
     if (!places || !inputRef.current) return;
 
     const options = {
-      fields: ['name', 'formatted_address'],
+      fields: ['name', 'formatted_address', 'place_id'],
     };
 
     const autocomplete = new places.Autocomplete(inputRef.current, options);
@@ -25,8 +25,10 @@ export const PlaceAutocomplete = ({ onPlaceSelect, defaultValue = '', placeholde
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
       const placeName = place.name || place.formatted_address || '';
+      const placeId = place.place_id;
+      
       setInputValue(placeName);
-      onPlaceSelect(placeName);
+      onPlaceSelect(placeName, placeId);
     });
   }, [places]);
 

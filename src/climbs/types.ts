@@ -10,6 +10,7 @@ export interface Climb {
   gradeWarning: boolean;
   date: string;        // YYYY-MM-DD
   location?: string;
+  locationId?: string; // Google Place ID
   result: ClimbResult;
   notes?: string;
   createdAt: string;   // ISO 8601
@@ -21,5 +22,6 @@ export interface ClimbInput {
   date: string;
   result: ClimbResult;
   location?: string;
+  locationId?: string;
   notes?: string;
 }

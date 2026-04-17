@@ -23,9 +23,12 @@ export type SuggestionResult =
   | { status: 'success'; suggestions: AISuggestion[]; context?: string }
   | { status: 'error'; error: SuggestionError };
 
+export type SuggestionIntent = 'general' | 'weakness' | 'training_plan';
+
 export interface SuggestionRequest {
   maxGrade: string;
   style: ClimbingStyle;
+  intent?: SuggestionIntent;
 }
 
 export function createSuggestionsService(client: GeminiClient) {
@@ -37,8 +40,11 @@ export function createSuggestionsService(client: GeminiClient) {
       const climbs = await climbsService.getClimbs();
       if (climbs.length === 0) return { status: 'error', error: 'no_history' };
 
-      // 1. 執行 Search-Augmented Generation (RAG)
-      const searchQuery = `最新的 ${req.style} 攀岩訓練建議與熱門 ${req.maxGrade} 難度路線`;
+      // 1. 根據意圖調整搜尋關鍵字
+      let searchQuery = `最新的 ${req.style} 攀岩訓練建議與熱門 ${req.maxGrade} 難度路線`;
+      if (req.intent === 'weakness') searchQuery = `攀岩突破 ${req.maxGrade} 瓶頸的常見弱點與解決方法`;
+      if (req.intent === 'training_plan') searchQuery = `針對程度 ${req.maxGrade} 的 ${req.style} 四週攀岩訓練課表範例`;
+
       const searchResult = await feloSearchService.search(searchQuery);
 
       const searchContext = searchResult 
@@ -46,6 +52,12 @@ export function createSuggestionsService(client: GeminiClient) {
         : '';
 
       // 2. 構建增強提示詞 (Enhanced Prompt)
+      const intentPrompt = req.intent === 'weakness' 
+        ? '請分析這位攀岩者的潛在弱點（假設基於其最高難度）並給予改進建議。'
+        : req.intent === 'training_plan'
+        ? '請為這位攀岩者量身打造一個為期四週的訓練目標。'
+        : '請推薦 3 條適合的路線或訓練目標。';
+
       const prompt = `
 你現在的角色是：${COACH_PERSONA.name}
 特質：${COACH_PERSONA.traits.join('、')}
@@ -56,7 +68,8 @@ export function createSuggestionsService(client: GeminiClient) {
 - 偏好風格：${req.style}
 ${searchContext}
 
-請結合以上最新資訊與攀岩者背景，推薦 3 條適合的路線或訓練目標。
+${intentPrompt}
+請以 JSON 格式回應。
 `;
 
       try {

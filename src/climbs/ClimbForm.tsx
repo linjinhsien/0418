@@ -118,7 +118,9 @@ export default function ClimbForm({ onSaved }: { onSaved?: () => void }) {
               {t('climbForm.location')}
             </label>
             <PlaceAutocomplete
-              onPlaceSelect={(name) => handleChange('location', name)}
+              onPlaceSelect={(name, id) => {
+                setForm(prev => ({ ...prev, location: name, locationId: id }));
+              }}
               defaultValue={form.location}
               placeholder={t('climbForm.location')}
             />
