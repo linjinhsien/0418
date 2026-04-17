@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Climber App is a mobile-first React Native application built with Expo. It enables climbers to log routes, track progress, view statistics, and receive AI-powered route suggestions via the Gemini API. All data is stored locally in SQLite with no authentication or cloud sync in v1.
+The Climber App is a React Web application (Vite + TypeScript) for rock climbers. It enables climbers to log routes, track progress, view statistics, and receive AI-powered route suggestions via the Gemini API. Data is persisted in Firebase Firestore. The UI is built with React 18, styled with Vanilla CSS, and charts use Recharts.
 
 The architecture enforces a strict three-layer separation: UI → Domain → Data. No layer may skip another. Module boundaries are enforced at the import level.
 
@@ -31,176 +31,122 @@ graph TD
     CR[ClimbsRepository]
     PR[ProfileRepository]
     GC[GeminiClient]
-    DB2[(SQLite)]
   end
 
-  subgraph Shared
-    GU[GradeUtils]
-    ET[ErrorTypes]
-    DBM[db - migrations]
-    LOC[localization]
+  subgraph External
+    FS[(Firebase Firestore)]
+    GM[Gemini API\ngemini-2.0-flash]
   end
 
   CF --> CS
   CL --> CS
   DB --> SA
   SS --> SVC
-  PS --> CS
+  PS --> PR
 
   CS --> CR
   SA --> CR
   SVC --> GC
-  CS --> PR
+  SVC --> CR
 
-  CR --> DB2
-  PR --> DB2
-  DBM --> DB2
+  CR --> FS
+  PR --> FS
+  GC --> GM
 ```
-
-The UI layer never imports from the Data layer directly. All data flows through Domain services.
 
 ---
 
-## Components and Interfaces
+## Tech Stack
 
-### ClimbsService (`src/climbs/climbsService.ts`)
-
-```typescript
-interface ClimbsService {
-  addClimb(input: ClimbInput): Promise<Climb>;
-  getClimbs(): Promise<Climb[]>;
-}
-
-interface ClimbInput {
-  routeName: string;
-  grade: string;
-  date: string;        // ISO 8601
-  result: 'sent' | 'attempt';
-  location?: string;
-  notes?: string;
-}
-```
-
-Responsibilities:
-- Validates required fields before persisting
-- Delegates grade classification to `GradeUtils`
-- Assigns UUID and `createdAt` timestamp
-- Calls `ClimbsRepository` for persistence
-
-### ClimbsRepository (`src/climbs/climbsRepository.ts`)
-
-```typescript
-interface ClimbsRepository {
-  insert(climb: Climb): Promise<void>;
-  findAll(): Promise<Climb[]>;
-}
-```
-
-### StatsAggregator (`src/dashboard/statsAggregator.ts`)
-
-```typescript
-interface ClimbStats {
-  totalClimbs: number;
-  totalSends: number;
-  totalAttempts: number;
-  byGrade: Record<string, number>;
-}
-
-interface StatsAggregator {
-  compute(climbs: Climb[]): ClimbStats;
-}
-```
-
-Read-only. Never writes to the database.
-
-### SuggestionsService (`src/suggestions/suggestionsService.ts`)
-
-```typescript
-type SuggestionError = 'api_error' | 'offline' | 'no_history';
-
-interface SuggestionResult {
-  suggestions: string[] | null;
-  error: SuggestionError | null;
-}
-
-interface SuggestionsService {
-  getSuggestions(input: SuggestionInput): Promise<SuggestionResult>;
-}
-
-interface SuggestionInput {
-  maxGrade: string;
-  style: string;
-}
-```
-
-Responsibilities:
-- Checks network state before calling Gemini
-- Constructs prompt with system instruction
-- Returns typed error states — never throws raw exceptions
-- Never persists responses
-
-### GeminiClient (`src/suggestions/geminiClient.ts`)
-
-```typescript
-interface GeminiClient {
-  complete(systemInstruction: string, userPrompt: string): Promise<string>;
-}
-```
-
-Isolated behind `SuggestionsService`. No other module imports this.
-
-### ProfileRepository (`src/profile/profileRepository.ts`)
-
-```typescript
-interface ProfileRepository {
-  get(): Promise<UserProfile | null>;
-  save(profile: UserProfile): Promise<void>;
-}
-```
-
-Always uses `id: 'singleton'`.
-
-### GradeUtils (`src/shared/gradeUtils.ts`)
-
-```typescript
-interface GradeResult {
-  gradeSystem: 'v-scale' | 'yds' | 'unknown';
-  hasWarning: boolean;
-}
-
-function classifyGrade(grade: string): GradeResult;
-```
-
-The sole location for grade validation. V-scale regex: `/^[Vv](1[0-7]|[0-9])$/`. YDS regex: `/^5\.(1[0-5][a-d]?|[0-9])$/`.
-
-### Localization (`src/shared/localization.ts`)
-
-```typescript
-type Locale = 'en' | 'zh-TW';
-
-function t(key: string): string;
-function getLocale(): Locale;
-```
-
-Reads device locale via `expo-localization`. Falls back to `'en'` for missing keys. Translation files stored as `src/shared/locales/en.json` and `src/shared/locales/zh-TW.json`.
+| Category | Technology | Notes |
+|----------|-----------|-------|
+| Language | TypeScript 5.x | Strict mode |
+| Frontend | React 18 + Vite | Web SPA |
+| Styling | Vanilla CSS | No inline styles (SC-006) |
+| Charts | Recharts | Grade trends, success rate |
+| Backend / DB | Firebase Firestore | Cloud persistence |
+| AI | `@google/generative-ai` | `gemini-2.0-flash` |
+| i18n | react-i18next | zh-TW default, en fallback |
+| State | React Context / Zustand | v1 |
+| Testing | Vitest + RTL + fast-check | Unit + property tests |
 
 ---
 
-## Data Models
+## Project Structure
+
+```
+src/
+├── climbs/
+│   ├── ClimbForm.tsx
+│   ├── ClimbList.tsx
+│   ├── climbsService.ts
+│   ├── climbsRepository.ts
+│   └── types.ts
+├── dashboard/
+│   ├── Dashboard.tsx
+│   └── statsAggregator.ts
+├── suggestions/
+│   ├── SuggestionsScreen.tsx
+│   ├── suggestionsService.ts
+│   └── geminiClient.ts
+├── profile/
+│   ├── ProfileScreen.tsx
+│   └── profileRepository.ts
+├── services/
+│   ├── firebase.ts
+│   └── firestoreCollections.ts
+├── shared/
+│   ├── utils/
+│   │   └── gradeUtils.ts
+│   ├── types/
+│   │   └── errorTypes.ts
+│   └── i18n/
+│       ├── index.ts
+│       ├── zh-TW.json
+│       └── en.json
+├── navigation/
+│   └── AppNavigator.tsx
+├── App.tsx
+└── main.tsx
+```
+
+---
+
+## Layer Rules
+
+| Rule | Detail |
+|------|--------|
+| UI → Domain only | UI components call Services/Domain; never import Repository directly |
+| `shared/` is isolated | `shared/` must not import from any feature module |
+| Dashboard is read-only | `dashboard/` must not write or mutate Climb data |
+| Suggestions are transient | `suggestions/` must not persist data to Firestore |
+| Grade validation is centralized | All grade logic lives in `shared/utils/gradeUtils.ts` |
+| Backend is abstracted | All Firestore calls go through `services/` |
+
+---
+
+## Data Model
+
+### Climb (Firestore collection: `climbs`)
 
 ```typescript
 interface Climb {
-  id: string;              // UUID v4
-  routeName: string;
-  grade: string;
+  id: string;              // UUID
+  routeName: string;       // required
+  grade: string;           // required, raw input
   gradeSystem: 'v-scale' | 'yds' | 'unknown';
-  date: string;            // ISO 8601
+  gradeWarning: boolean;
+  date: string;            // ISO 8601 YYYY-MM-DD
   location?: string;
   result: 'sent' | 'attempt';
   notes?: string;
-  createdAt: string;       // ISO 8601
+  createdAt: string;       // ISO 8601 timestamp
 }
+```
 
+### UserProfile (Firestore document: `userProfile/singleton`)
+
+```typescript
 interface UserProfile {
   id: 'singleton';
   name?: string;
@@ -210,190 +156,46 @@ interface UserProfile {
 }
 ```
 
-### SQLite Schema
-
-```sql
--- Migration v1
-CREATE TABLE IF NOT EXISTS climbs (
-  id TEXT PRIMARY KEY,
-  routeName TEXT NOT NULL,
-  grade TEXT NOT NULL,
-  gradeSystem TEXT NOT NULL CHECK(gradeSystem IN ('v-scale', 'yds', 'unknown')),
-  date TEXT NOT NULL,
-  location TEXT,
-  result TEXT NOT NULL CHECK(result IN ('sent', 'attempt')),
-  notes TEXT,
-  createdAt TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_profile (
-  id TEXT PRIMARY KEY DEFAULT 'singleton',
-  name TEXT,
-  homeGym TEXT,
-  climbingSince TEXT,
-  goals TEXT
-);
-
-CREATE TABLE IF NOT EXISTS schema_migrations (
-  version INTEGER PRIMARY KEY,
-  appliedAt TEXT NOT NULL
-);
-```
-
-### Database Migrations (`src/shared/db.ts`)
-
-Migrations are an ordered array of `{ version: number, up: string }` objects. On app init, `db.ts` reads `schema_migrations`, compares against the registered list, and applies any pending migrations in ascending version order. If a migration throws, a typed `MigrationError` is surfaced and no further migrations run.
-
----
-
-## Correctness Properties
-
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
-
-### Property 1: Grade classification is total and exhaustive
-
-*For any* grade string, `classifyGrade` SHALL return exactly one of `v-scale`, `yds`, or `unknown` — never throws, never returns null.
-
-**Validates: Requirements 6.2, 6.4**
-
----
-
-### Property 2: Unknown grades always carry a warning
-
-*For any* grade string that is not a valid V-scale or YDS grade, `classifyGrade` SHALL return `hasWarning: true`.
-
-**Validates: Requirements 6.3, 1.4**
-
----
-
-### Property 3: Valid grades never carry a warning
-
-*For any* grade string that is a valid V-scale or YDS grade, `classifyGrade` SHALL return `hasWarning: false`.
-
-**Validates: Requirements 6.2**
-
----
-
-### Property 4: Climb persistence round-trip
-
-*For any* valid `ClimbInput`, calling `addClimb` then `getClimbs` SHALL return a list that contains a Climb whose `routeName`, `grade`, `gradeSystem`, `date`, and `result` match the input.
-
-**Validates: Requirements 1.1, 2.1**
-
----
-
-### Property 5: Stats are consistent with climb list
-
-*For any* list of Climb records, `StatsAggregator.compute` SHALL return `totalClimbs === climbs.length`, `totalSends === climbs.filter(c => c.result === 'sent').length`, and `totalAttempts === climbs.filter(c => c.result === 'attempt').length`.
-
-**Validates: Requirements 3.1, 3.2**
-
----
-
-### Property 6: Grade breakdown covers all climbs
-
-*For any* list of Climb records, the sum of all values in `byGrade` SHALL equal `totalClimbs`.
-
-**Validates: Requirements 3.3**
-
----
-
-### Property 7: Offline state prevents Gemini calls
-
-*For any* `SuggestionInput`, when the network is offline, `getSuggestions` SHALL return `{ suggestions: null, error: 'offline' }` without invoking `GeminiClient`.
-
-**Validates: Requirements 4.4, 7.2**
-
----
-
-### Property 8: Suggestions are never persisted
-
-*For any* `SuggestionInput` that results in a successful Gemini response, the SQLite database SHALL contain no record of the response content after the call completes.
-
-**Validates: Requirements 4.9, 8.4**
-
----
-
-### Property 9: Localization key lookup never returns null
-
-*For any* translation key and any supported locale, `t(key)` SHALL return a non-empty string — either the locale translation or the English fallback.
-
-**Validates: Requirements 9.5**
-
----
-
-### Property 10: Migration idempotence
-
-*For any* database state where migration version N has already been applied, running the migration runner again SHALL NOT re-apply version N and SHALL leave the database state unchanged.
-
-**Validates: Requirements 10.2**
-
----
-
-## Error Handling
-
-All errors are expressed as typed values, never raw exceptions surfaced to the UI.
+### AISuggestion (transient — never persisted)
 
 ```typescript
-// src/shared/errorTypes.ts
-type SuggestionError = 'api_error' | 'offline' | 'no_history';
-
-interface MigrationError {
-  type: 'migration_error';
-  version: number;
-  cause: string;
+interface AISuggestion {
+  name: string;
+  grade: string;
+  style: 'bouldering' | 'sport' | 'trad';
+  reason: string;  // zh-TW
 }
 ```
 
-| Scenario | Error type | UI behavior |
-|---|---|---|
-| Gemini API failure | `api_error` | Non-blocking banner on SuggestionsScreen |
-| Device offline | `offline` | Non-blocking banner on SuggestionsScreen |
-| No climb history | `no_history` | Non-blocking banner on SuggestionsScreen |
-| Migration failure | `MigrationError` | App-level error boundary, halt further migrations |
-| Missing form field | Inline validation | Field-level error message in ClimbForm |
+---
+
+## Gemini Prompt Contract
+
+**Model**: `gemini-2.0-flash`  
+**API key**: `import.meta.env.VITE_GEMINI_API_KEY`
+
+**System instruction** (injected on every request):
+```
+你是一位專業攀岩教練助理。你的唯一職責是根據攀岩者的程度與風格偏好，推薦適合的攀岩路線。
+請勿回答與攀岩路線建議無關的任何問題。
+回應格式必須為 JSON 陣列，每筆包含：name、grade、style、reason（繁體中文）。
+```
+
+**User turn template**:
+```
+攀岩者資訊：
+- 最高難度：{maxGrade}
+- 偏好風格：{style}
+
+請推薦 3 條適合的路線。
+```
 
 ---
 
-## Testing Strategy
+## Environment Variables
 
-### Dual Testing Approach
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_GEMINI_API_KEY` | Yes | Gemini API key from aistudio.google.com |
 
-Both unit tests and property-based tests are required. They are complementary:
-
-- **Unit tests** verify specific examples, edge cases, and error conditions
-- **Property tests** verify universal properties hold across all generated inputs
-
-### Property-Based Testing Library
-
-**`fast-check`** — TypeScript-native, works in Jest/Vitest, no additional runtime needed.
-
-```bash
-npm install --save-dev fast-check
-```
-
-Each property test runs a minimum of **100 iterations**.
-
-Each property test is annotated with:
-```
-// Feature: climber-app, Property N: <property text>
-```
-
-### Test Coverage by Component
-
-| Component | Unit tests | Property tests |
-|---|---|---|
-| `GradeUtils` | V-scale boundaries, YDS boundaries, freetext | Properties 1, 2, 3 |
-| `ClimbsService` + `ClimbsRepository` | Required field validation, UUID assignment | Property 4 |
-| `StatsAggregator` | Empty list, single climb, mixed results | Properties 5, 6 |
-| `SuggestionsService` | Offline mock, API error mock, no history | Property 7 |
-| `ProfileRepository` | Save then load, overwrite singleton | — |
-| `db` migrations | Version ordering, halt on failure | Property 10 |
-| `localization` | Known key en, known key zh-TW, missing key | Property 9 |
-
-### Unit Test Focus Areas
-
-- `ClimbForm` validation: empty fields, whitespace-only route name
-- `SuggestionsScreen` error banner rendering for each error type
-- `Dashboard` zero-state rendering
-- `ClimbList` empty-state rendering
+Set in `.env.local` (git-ignored via `.env.*` rule).

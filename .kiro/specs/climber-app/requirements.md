@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Climber App is a mobile-first React Native application for rock climbers to log their climbs, track progress over time, view aggregated stats on a dashboard, and receive AI-powered route suggestions via the Gemini API. All data is stored locally via SQLite with no authentication or cloud sync in v1.
+The Climber App is a React Web application (Vite + TypeScript) for rock climbers to log their climbs, track progress, view aggregated stats on a dashboard, and receive AI-powered route suggestions via the Gemini API. Data is persisted in Firebase Firestore. Authentication is out of scope for v1 (single-user).
 
 ## Glossary
 
@@ -10,15 +10,30 @@ The Climber App is a mobile-first React Native application for rock climbers to 
 - **Grade**: A difficulty rating in V-scale (V0–V17), YDS (5.0–5.15d), or freetext with a warning flag.
 - **GradeSystem**: The grading system used — `v-scale`, `yds`, or `unknown`.
 - **Result**: The outcome of a climb attempt — `sent` (completed) or `attempt` (did not complete).
-- **Dashboard**: A read-only view of aggregated climbing statistics and charts.
-- **Suggestions**: AI-generated route recommendations produced by the Gemini API.
+- **Dashboard**: A read-only view of aggregated climbing statistics and charts (Recharts).
+- **Suggestions**: AI-generated route recommendations produced by the Gemini API (`gemini-2.0-flash`).
 - **SuggestionsService**: The single service responsible for all Gemini API interactions.
 - **UserProfile**: A singleton record storing optional user metadata such as name, home gym, and goals.
-- **ClimbsRepository**: The data-layer component responsible for SQLite read/write operations on climbs.
-- **ProfileRepository**: The data-layer component responsible for SQLite read/write operations on the user profile.
+- **ClimbsRepository**: The data-layer component responsible for Firestore read/write operations on climbs.
+- **ProfileRepository**: The data-layer component responsible for Firestore read/write operations on the user profile.
 - **StatsAggregator**: The domain-layer component that computes read-only statistics from climb data.
 - **GradeUtils**: The shared utility module that owns all grade validation and normalization logic.
 - **Domain Layer**: The middle layer containing use cases and entities; mediates between UI and Data layers.
+
+---
+
+## Tech Stack
+
+| Category | Technology |
+|----------|-----------|
+| Language | TypeScript 5.x |
+| Frontend | React 18 + Vite |
+| Styling | Vanilla CSS (no inline styles) |
+| Charts | Recharts |
+| Backend / DB | Firebase Firestore |
+| AI | Gemini API (`gemini-2.0-flash`) via `@google/generative-ai` |
+| i18n | react-i18next (zh-TW default, en fallback) |
+| Testing | Vitest + React Testing Library + fast-check |
 
 ---
 
@@ -30,7 +45,7 @@ The Climber App is a mobile-first React Native application for rock climbers to 
 
 #### Acceptance Criteria
 
-1. WHEN a user submits the climb form with a valid route name, grade, date, and result, THE ClimbsService SHALL create a new Climb record and persist it via ClimbsRepository.
+1. WHEN a user submits the climb form with a valid route name, grade, date, and result, THE ClimbsService SHALL create a new Climb record and persist it via ClimbsRepository to Firestore.
 2. WHEN a user submits a grade in V-scale format (V0–V17), THE GradeUtils SHALL classify the gradeSystem as `v-scale`.
 3. WHEN a user submits a grade in YDS format (5.0–5.15d), THE GradeUtils SHALL classify the gradeSystem as `yds`.
 4. WHEN a user submits a grade that matches neither V-scale nor YDS format, THE GradeUtils SHALL classify the gradeSystem as `unknown` and attach a warning flag to the Climb record.
@@ -60,7 +75,7 @@ The Climber App is a mobile-first React Native application for rock climbers to 
 
 1. WHEN the dashboard screen is displayed, THE StatsAggregator SHALL compute statistics from all persisted Climb records.
 2. THE Dashboard SHALL display total climbs logged, total sends, and total attempts.
-3. THE Dashboard SHALL display a breakdown of climbs by grade.
+3. THE Dashboard SHALL display a breakdown of climbs by grade using Recharts.
 4. THE StatsAggregator SHALL only read climb data and SHALL NOT write or mutate any Climb records.
 5. WHEN no climbs have been logged, THE Dashboard SHALL display zero-state values for all statistics.
 
@@ -72,100 +87,83 @@ The Climber App is a mobile-first React Native application for rock climbers to 
 
 #### Acceptance Criteria
 
-1. WHEN a user provides a max grade and climbing style and requests suggestions, THE SuggestionsService SHALL construct a prompt and call the Gemini API.
+1. WHEN a user provides a max grade and climbing style and requests suggestions, THE SuggestionsService SHALL construct a prompt and call the Gemini API (`gemini-2.0-flash`).
 2. THE SuggestionsService SHALL include a system instruction in every Gemini prompt that caps the response to route suggestions only.
 3. WHEN the Gemini API returns a successful response, THE SuggestionsScreen SHALL display the suggested routes to the user.
 4. WHEN the device is offline, THE SuggestionsService SHALL return an `offline` error state without making a network call.
 5. WHEN the Gemini API call fails, THE SuggestionsService SHALL return an `api_error` error state.
 6. WHEN the user has no climb history, THE SuggestionsService SHALL return a `no_history` error state.
-7. IF an error state is present, THEN THE SuggestionsScreen SHALL display a non-blocking error banner corresponding to the error type (`api_error`, `offline`, or `no_history`).
-8. WHILE the device is offline, THE SuggestionsScreen SHALL display a non-blocking offline banner and all local features SHALL remain fully functional.
-9. THE SuggestionsService SHALL NOT persist any Gemini API responses to local storage.
-10. WHERE a UserProfile exists with a max grade or style preference, THE SuggestionsScreen SHALL pre-fill the suggestion input fields with that data but SHALL NOT auto-submit the request.
+7. THE SuggestionsScreen SHALL display a non-blocking error banner for each error type (`api_error`, `offline`, `no_history`).
+8. THE SuggestionsScreen SHALL pre-fill maxGrade and style from UserProfile if available, without auto-submitting.
+9. THE SuggestionsService SHALL NOT persist AI suggestion responses to Firestore or any storage.
+10. THE SuggestionsScreen SHALL show an offline banner while the device is offline.
 
 ---
 
 ### Requirement 5: User Profile
 
-**User Story:** As a climber, I want to manage my profile with my name, home gym, and climbing goals, so that I can personalize my experience.
+**User Story:** As a climber, I want to save my profile information, so that the app can pre-fill suggestion inputs.
 
 #### Acceptance Criteria
 
-1. WHEN a user saves their profile, THE ProfileRepository SHALL persist the UserProfile record to SQLite using the singleton id `'singleton'`.
-2. WHEN the profile screen is displayed, THE ProfileScreen SHALL load and display the current UserProfile from ProfileRepository.
-3. THE ProfileScreen SHALL NOT trigger any AI or Gemini API calls.
-4. WHEN no profile has been saved, THE ProfileScreen SHALL display empty fields with placeholder text.
+1. WHEN a user saves their profile, THE ProfileRepository SHALL persist the UserProfile as a singleton document in Firestore.
+2. WHEN the profile screen is loaded, THE ProfileScreen SHALL retrieve the UserProfile via ProfileRepository.
+3. THE ProfileScreen SHALL display editable fields: name, homeGym, climbingSince, goals.
+4. WHEN no profile has been saved, THE ProfileScreen SHALL display placeholder text for all fields.
 
 ---
 
 ### Requirement 6: Grade Validation
 
-**User Story:** As a climber, I want my grades to be validated consistently, so that my climb data is accurate and comparable.
-
 #### Acceptance Criteria
 
-1. THE GradeUtils SHALL be the sole location for grade validation and normalization logic — no inline grade validation SHALL exist elsewhere in the codebase.
-2. WHEN a grade string is evaluated, THE GradeUtils SHALL return a `gradeSystem` value of `v-scale`, `yds`, or `unknown`.
-3. WHEN a grade is classified as `unknown`, THE GradeUtils SHALL return a warning flag alongside the grade result.
-4. THE GradeUtils SHALL accept freetext grades without rejecting them silently — all grades SHALL be stored.
+1. THE GradeUtils module SHALL be the single source of truth for all grade validation logic.
+2. WHEN a grade matches V-scale format, GradeUtils SHALL return `{ gradeSystem: 'v-scale', gradeWarning: false }`.
+3. WHEN a grade matches YDS format, GradeUtils SHALL return `{ gradeSystem: 'yds', gradeWarning: false }`.
+4. WHEN a grade matches neither format, GradeUtils SHALL return `{ gradeSystem: 'unknown', gradeWarning: true }`.
+5. THE ClimbForm SHALL display an inline warning when gradeWarning is true (does not block submission).
 
 ---
 
 ### Requirement 7: Offline Resilience
 
-**User Story:** As a climber, I want the app to remain fully functional without a network connection, so that I can log climbs anywhere.
-
 #### Acceptance Criteria
 
-1. WHILE the device is offline, THE App SHALL allow users to log climbs, view climb history, view the dashboard, and manage their profile without degradation.
-2. WHEN a network state check is performed before a Gemini API call and the device is offline, THE SuggestionsService SHALL return an `offline` error state immediately.
-3. THE App SHALL check network state before every Gemini API call.
+1. WHEN the device is offline, THE app SHALL display an offline banner on the Suggestions screen.
+2. WHEN the device is offline, THE SuggestionsService SHALL not attempt any Gemini API call.
+3. WHEN the device is offline, previously loaded climb history SHALL remain visible (Firestore offline cache).
 
 ---
 
-### Requirement 8: Layered Architecture
-
-**User Story:** As a developer, I want a clean layered architecture, so that the codebase is maintainable and each module has clear responsibilities.
+### Requirement 8: Architecture Constraints
 
 #### Acceptance Criteria
 
-1. THE UI layer SHALL NOT import from or directly call the Data layer — all data access SHALL flow through the Domain layer.
-2. THE `climbs` module SHALL NOT import from the `suggestions` or `dashboard` modules.
-3. THE `dashboard` module SHALL NOT write or mutate Climb data.
-4. THE `suggestions` module SHALL NOT persist any data to SQLite.
-5. THE `profile` module SHALL NOT trigger Gemini API calls.
-6. THE `shared` module SHALL NOT import from any feature module (`climbs`, `dashboard`, `suggestions`, `profile`).
+1. THE UI layer SHALL NOT import directly from the Data layer — all data flows through Services/Domain layer.
+2. THE `shared/` module SHALL NOT import from any feature module.
+3. THE `features/dashboard/` SHALL NOT write or mutate Climb data directly.
+4. THE `features/suggestions/` SHALL NOT persist data.
+5. Grade validation logic SHALL live exclusively in `shared/utils/gradeUtils.ts`.
+6. All backend interactions SHALL be abstracted via `services/`.
 
 ---
 
-### Requirement 9: Localization (Traditional Chinese)
-
-**User Story:** As a Traditional Chinese-speaking climber, I want the app UI to be available in Traditional Chinese (zh-TW), so that I can use the app in my preferred language.
+### Requirement 9: Localisation
 
 #### Acceptance Criteria
 
-1. THE App SHALL support Traditional Chinese (zh-TW) as a display language alongside English.
-2. WHEN the device locale is set to zh-TW, THE App SHALL render all UI labels, buttons, error messages, and empty-state text in Traditional Chinese.
-3. WHEN the device locale is not zh-TW, THE App SHALL render UI text in English as the default language.
-4. THE Localization system SHALL provide translated strings for all user-facing text across all screens (ClimbForm, ClimbList, Dashboard, SuggestionsScreen, ProfileScreen).
-5. IF a translation key is missing for the active locale, THEN THE Localization system SHALL fall back to the English string for that key.
+1. THE app SHALL use Traditional Chinese (zh-TW) as the default locale.
+2. ALL user-facing strings SHALL be accessed via `t()` from react-i18next — no hardcoded strings.
+3. THE app SHALL fall back to English (`en`) for any key missing from zh-TW translations.
+4. Translation files SHALL cover: ClimbForm, ClimbList, Dashboard, SuggestionsScreen, ProfileScreen labels, buttons, errors, and empty states.
+5. THE `t()` function SHALL never return null or empty string for any defined key in any supported locale.
 
 ---
 
-### Requirement 10: Database Migrations
-
-**User Story:** As a developer, I want versioned database migrations, so that the SQLite schema can evolve safely over time.
+### Requirement 10: Environment Configuration
 
 #### Acceptance Criteria
 
-1. THE Database SHALL version its schema migrations from the initial release.
-2. WHEN the app initializes, THE Database SHALL apply any pending migrations in version order.
-3. IF a migration fails, THEN THE Database SHALL surface a typed error and halt further migration steps.
-
----
-
-## Glossary (additions)
-
-- **Locale**: The device's language/region setting used to determine the active display language.
-- **Localization**: The system responsible for mapping translation keys to locale-specific strings.
-- **zh-TW**: Traditional Chinese as used in Taiwan — the supported non-English locale for v1.
+1. THE Gemini API key SHALL be provided via the `VITE_GEMINI_API_KEY` environment variable.
+2. THE `.env.local` file SHALL NOT be committed to version control (covered by `.gitignore`).
+3. THE app SHALL fail gracefully (show `api_error` state) if `VITE_GEMINI_API_KEY` is missing or invalid.
