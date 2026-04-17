@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@firebase/vertexai": "^1.2.4",
     "@google/generative-ai": "^0.21.0",
     "@vis.gl/react-google-maps": "^1.8.3",
     "clsx": "^2.1.1",

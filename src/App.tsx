@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import { Layout } from './components/Layout';
 import ClimbForm from './climbs/ClimbForm';
 import ClimbList from './climbs/ClimbList';
 import Dashboard from './dashboard/Dashboard';
 import SuggestionsScreen from './suggestions/SuggestionsScreen';
 import ProfileScreen from './profile/ProfileScreen';
-import React, { useState } from 'react';
-import { APIProvider } from '@vis.gl/react-google-maps';
-import { Layout } from './components/Layout';
-...
+
+type Tab = 'climbs' | 'dashboard' | 'suggestions' | 'profile';
+
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('climbs');
   const [refreshTrigger, setRefreshTrigger] = useState(0);

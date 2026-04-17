@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getVertexAI } from 'firebase/vertexai';
+import { getVertexAI } from '@firebase/vertexai';
 
 const firebaseConfig = {
   projectId: "solar-curve-490711-p4",

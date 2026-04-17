@@ -1,4 +1,4 @@
-import { getGenerativeModel } from 'firebase/vertexai';
+import { getGenerativeModel } from '@firebase/vertexai';
 import { vertexAI } from '@/shared/firebase';
 
 const SYSTEM_INSTRUCTION =
