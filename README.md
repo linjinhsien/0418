@@ -14,6 +14,7 @@
 
 ---
 
+
 ## Overview
 
 A React web app that helps climbers:
@@ -25,7 +26,7 @@ A React web app that helps climbers:
 Data is persisted in **Firebase Firestore** (project: `solar-curve-490711-p4`).
 
 ---
-
+02-06  branch 是kiro-cli 用speckit 生的 但是有一些動作他漏掉了 。後來用程式補回去
 ## Tech Stack
 
 | Category | Technology |
