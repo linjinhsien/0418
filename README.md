@@ -26,7 +26,9 @@ A React web app that helps climbers:
 Data is persisted in **Firebase Firestore** (project: `solar-curve-490711-p4`).
 
 ---
-02-06  branch 是kiro-cli 用speckit 生的 但是有一些動作他漏掉了 。後來用程式補回去
+02-06  branch 是kiro-cli 用speckit 生的 但是有一些動作他漏掉了 。後來用程式補回去。
+中間有用 kiro 的ide 重新設計一次，在.kiro 裡面的 spec ,後來 npm run dev run 不起來 有用anti-gravity 改成用vite, 規格過多導致容易產生混亂，所以有清洗一次。 api key 來自不同專案或其他 易生混亂。 所以後來地圖的有enable Map JavaScript API places API new 跟 cloud firestore API vertex API 等。
+
 ## Tech Stack
 
 | Category | Technology |
