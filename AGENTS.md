@@ -41,8 +41,6 @@ Auto-generated from feature plans. Last updated: 2026-04-18T10:00:00+08:00
 | `VITE_GEMINI_API_KEY` | Yes | Set in `.env.local` (git-ignored) |
 | `VITE_GOOGLE_MAPS_API_KEY` | Yes | Google Maps API key |
 | `VITE_FIREBASE_API_KEY` | Yes | Firebase API key |
-| `FELO_API_KEY` | Yes | Felo Search API key (git-ignored) |
-| `VITE_FELO_API_KEY` | Yes | Felo Search API key (client-side) |
 
 ## AI Agent Implementation Guidelines (2026)
 
