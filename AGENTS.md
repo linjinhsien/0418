@@ -60,9 +60,13 @@ src/
 ├── App.tsx
 ├── main.tsx
 ├── index.css
+├── vite-env.d.ts
 ├── components/
+│   ├── ClimbMap.tsx
 │   ├── Layout.tsx
-│   └── Navigation.tsx
+│   ├── Navigation.tsx
+│   ├── PlaceAutocomplete.tsx
+│   └── __tests__/PlaceAutocomplete.test.tsx
 ├── climbs/
 │   ├── ClimbForm.tsx
 │   ├── ClimbList.tsx
@@ -78,6 +82,9 @@ src/
 │   ├── SuggestionsScreen.tsx
 │   ├── suggestionsService.ts
 │   ├── geminiClient.ts
+│   ├── orchestrator.ts
+│   ├── kernel/
+│   │   └── skills.ts
 │   └── __tests__/suggestionsService.test.ts
 ├── profile/
 │   ├── ProfileScreen.tsx
