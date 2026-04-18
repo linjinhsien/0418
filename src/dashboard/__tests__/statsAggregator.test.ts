@@ -1,4 +1,5 @@
 import * as fc from 'fast-check';
+import { describe, it, expect } from 'vitest';
 import { statsAggregator } from '../statsAggregator';
 import { Climb } from '@/climbs/types';
 

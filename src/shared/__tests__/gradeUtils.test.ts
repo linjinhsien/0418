@@ -1,4 +1,5 @@
 import * as fc from 'fast-check';
+import { describe, it, expect } from 'vitest';
 import { GradeUtils } from '../gradeUtils';
 
 const validVScale = ['V0', 'V1', 'V5', 'V10', 'V17', 'VB', 'v5', 'vb'];

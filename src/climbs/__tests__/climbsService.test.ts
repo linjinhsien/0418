@@ -18,7 +18,9 @@ const validInput: ClimbInput = {
   result: 'sent',
 };
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe('climbsService.addClimb', () => {
   it('assigns a UUID and createdAt on every new climb', async () => {

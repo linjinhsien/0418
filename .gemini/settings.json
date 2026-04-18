@@ -1,0 +1,9 @@
+{
+  "general": {
+    "defaultApprovalMode": "auto_edit",
+    "enableNotifications": true
+  },
+  "ui": {
+    "hideWindowTitle": true
+  }
+}

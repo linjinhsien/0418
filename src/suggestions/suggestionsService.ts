@@ -35,7 +35,7 @@ export interface SuggestionRequest {
 
 // 初始化 Kernel 並註冊技能
 const kernel = new SemanticKernel();
-skillRegistry.forEach(skill => kernel.register(skill));
+skillRegistry.forEach(skill => kernel.register(skill as any));
 
 export function createSuggestionsService(client: GeminiClient) {
   return {

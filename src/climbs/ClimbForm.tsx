@@ -17,7 +17,7 @@ export default function ClimbForm({ onSaved }: { onSaved?: () => void }) {
     result: 'sent',
     location: '',
     notes: '',
-    locationId: null,
+    locationId: undefined,
   });
   const [error, setError] = useState<string | null>(null);
   const [gradeWarning, setGradeWarning] = useState(false);

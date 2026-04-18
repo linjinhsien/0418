@@ -9,14 +9,14 @@ interface Props {
 export const ClimbMap = ({ locationName, locationId }: Props) => {
   const map = useMap();
   const places = useMapsLibrary('places');
-  const [position, setPosition] = useState<google.maps.LatLngLiteral | null>(null);
+  const [position, setPosition] = useState<any>(null);
 
   useEffect(() => {
     if (!places || !map) return;
 
     const fetchPosition = async () => {
       try {
-        const { Place } = await google.maps.importLibrary('places') as google.maps.PlacesLibrary;
+        const { Place } = await (window as any).google.maps.importLibrary('places');
         
         if (locationId) {
           const place = new Place({ id: locationId });

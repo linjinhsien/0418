@@ -17,12 +17,12 @@ export const PlaceAutocomplete = ({ onPlaceSelect, defaultValue = '', placeholde
 
     containerRef.current.innerHTML = '';
 
-    if (!places.PlaceAutocompleteElement) {
+    if (!(places as any).PlaceAutocompleteElement) {
       console.warn('Google Maps PlaceAutocompleteElement is not available.');
       return;
     }
 
-    const autocompleteElement = new places.PlaceAutocompleteElement();
+    const autocompleteElement = new (places as any).PlaceAutocompleteElement();
     
     // 支援 Placeholder
     if (placeholder) {

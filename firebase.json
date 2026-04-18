@@ -2,5 +2,19 @@
   "firestore": {
     "rules": "firestore.rules",
     "database": "ai-studio-b1efd353-fef4-4546-a539-038227947db6"
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }
