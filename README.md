@@ -1,4 +1,12 @@
 # 攀岩夥伴應用程式 (Climber App)
+<img width="1602" height="625" alt="image" src="https://github.com/user-attachments/assets/cdde20f6-fb0f-458b-a1c4-c22c0c98f5aa" />
+<img width="1566" height="905" alt="image" src="https://github.com/user-attachments/assets/4fae9f23-0e10-493d-a3a3-dedbdffa5b31" />
+<img width="1860" height="841" alt="image" src="https://github.com/user-attachments/assets/36e5e34f-4e1b-4004-a60a-a7ebee7be93f" />
+<img width="1791" height="944" alt="image" src="https://github.com/user-attachments/assets/c432297e-cdfa-434d-b272-276d1f76e70e" />
+
+
+<img width="1584" height="877" alt="image" src="https://github.com/user-attachments/assets/a5aa9109-1fb1-4f90-b2b8-906804974f23" />
+
 
 > AI-powered climbing companion — log routes, track progress, and get Gemini-powered suggestions.
 
