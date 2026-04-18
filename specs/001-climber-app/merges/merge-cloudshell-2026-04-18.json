@@ -1,0 +1,26 @@
+{
+  "speckit": "merge",
+  "version": "1.0.0",
+  "branch": "cloudshell",
+  "mergedInto": "main",
+  "date": "2026-04-18",
+  "author": "kiro-cli",
+  "commits": [
+    {
+      "hash": "5169479",
+      "message": "docs: sync AGENTS.md project structure with actual src files",
+      "type": "docs",
+      "scope": "AGENTS.md"
+    }
+  ],
+  "changes": [
+    "新增 src/components/ClimbMap.tsx",
+    "新增 src/components/PlaceAutocomplete.tsx",
+    "新增 src/components/__tests__/PlaceAutocomplete.test.tsx",
+    "新增 src/suggestions/orchestrator.ts",
+    "新增 src/suggestions/kernel/skills.ts",
+    "新增 src/vite-env.d.ts"
+  ],
+  "reason": "同步 AGENTS.md 專案結構與實際 src 目錄一致",
+  "status": "merged"
+}
