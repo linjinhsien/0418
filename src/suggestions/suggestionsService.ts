@@ -1,6 +1,7 @@
 import { SuggestionError } from '@/shared/errorTypes';
 import { GeminiClient } from './geminiClient';
-import { skills } from './kernel/skills';
+import { SemanticKernel, buildPlan } from './orchestrator';
+import { skillRegistry } from './kernel/skills';
 
 // AgentDevelopKit Persona Definition
 const COACH_PERSONA = {
@@ -32,54 +33,57 @@ export interface SuggestionRequest {
   onStreamChunk?: StreamChunkCallback;
 }
 
+// 初始化 Kernel 並註冊技能
+const kernel = new SemanticKernel();
+skillRegistry.forEach(skill => kernel.register(skill));
+
 export function createSuggestionsService(client: GeminiClient) {
   return {
     async getSuggestions(req: SuggestionRequest): Promise<SuggestionResult> {
       const isOnline = typeof window !== 'undefined' ? window.navigator.onLine : true;
       if (!isOnline) return { status: 'error', error: 'offline' };
 
-      // [Issue #3] Kernel 編排邏輯
-      // 1. 抓取歷史數據
-      const climbs = await skills.getUserClimbHistory();
-      if (climbs.length === 0) return { status: 'error', error: 'no_history' };
+      try {
+        // 1. 使用 Semantic Kernel 進行任務編排 (Orchestration)
+        const intent = req.intent || 'general';
+        const plan = buildPlan(intent);
+        
+        // 執行計畫獲取上下文
+        const context = await kernel.plan(plan, { 
+          maxGrade: req.maxGrade, 
+          style: req.style 
+        });
 
-      // 2. 執行分析技能
-      const analysisContext = await skills.analyzeWeakness(climbs);
+        // 2. 構建並增強提示詞 (基於 Kernel 產出的上下文)
+        const analysisContext = context.analysis as string || '初次使用，尚無歷史紀錄。';
+        const isTrainingPlan = !!context.planType;
 
-      // 3. 搜尋外部資訊
-      let searchQuery = `最新的 ${req.style} 攀岩訓練建議與熱門 ${req.maxGrade} 難度路線`;
-      if (req.intent === 'weakness') searchQuery = `攀岩突破 ${req.maxGrade} 瓶頸的常見弱點與解決方法`;
-      const searchAnswer = await skills.searchExternal(searchQuery);
-
-      // 4. 構建增強提示詞
-      const prompt = `
+        const prompt = `
 你現在的角色是：${COACH_PERSONA.name}
 特質：${COACH_PERSONA.traits.join('、')}
 專業範疇：${COACH_PERSONA.knowledgeDomain}
 
-使用者歷史背景：${analysisContext}
+使用者歷史背景分析：${analysisContext}
 攀岩者目前輸入：
 - 最高難度：${req.maxGrade}
 - 偏好風格：${req.style}
-- 意圖：${req.intent || '一般建議'}
+- 意圖：${isTrainingPlan ? '生成四週訓練計畫' : (intent === 'weakness' ? '深度弱點分析' : '一般路線建議')}
 
-外部搜尋參考：${searchAnswer}
-
-請基於以上數據提供 3 條具體的建議，並以 JSON 格式回應。
+${isTrainingPlan ? '請提供一個為期四週的訓練建議。' : ''}
+請基於以上數據與您的專業攀岩知識，提供 3 條具體的建議，並以 JSON 陣列格式回應。
+格式範例：[{"name": "建議名稱", "grade": "建議難度", "style": "風格", "reason": "詳細原因"}]
 `;
 
-      try {
-        // [Issue #4] 使用串流
         const raw = await client.completeStream(prompt, (chunk) => {
           if (req.onStreamChunk) req.onStreamChunk(chunk);
         });
 
         const jsonMatch = raw.match(/\[[\s\S]*\]/);
         const suggestions: AISuggestion[] = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
+        
         return { 
           status: 'success', 
-          suggestions,
-          context: searchAnswer 
+          suggestions 
         };
       } catch (err) {
         console.error('Service Error:', err);

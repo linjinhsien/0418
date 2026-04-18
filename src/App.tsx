@@ -14,7 +14,11 @@ function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   return (
-    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+    <APIProvider 
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      version="beta"
+      solutionChannel="GMP_devsite_samples_v3_rgmautocomplete"
+    >
       <Layout activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as Tab)}>
         {activeTab === 'climbs' && (
           <div className="max-w-4xl mx-auto space-y-8">

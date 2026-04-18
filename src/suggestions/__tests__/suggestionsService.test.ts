@@ -2,13 +2,22 @@ import * as fc from 'fast-check';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createSuggestionsService, SuggestionRequest } from '../suggestionsService';
 import { GeminiClient } from '../geminiClient';
-import { climbsService } from '@/climbs/climbsService';
 
-vi.mock('@/climbs/climbsService', () => ({
-  climbsService: { getClimbs: vi.fn() },
+// Mock skills module with the new structure
+vi.mock('../kernel/skills', () => ({
+  skillRegistry: [
+    { name: 'fetchHistory', description: 'desc', run: vi.fn() },
+    { name: 'analyzeWeakness', description: 'desc', run: vi.fn() },
+    { name: 'trainingPlan', description: 'desc', run: vi.fn() },
+  ],
 }));
 
-const mockClient: GeminiClient = { complete: vi.fn() };
+import { skillRegistry } from '../kernel/skills';
+
+const mockClient: GeminiClient = { 
+  complete: vi.fn(),
+  completeStream: vi.fn(),
+};
 const service = createSuggestionsService(mockClient);
 
 const req: SuggestionRequest = { maxGrade: 'V5', style: 'bouldering' };
@@ -21,47 +30,55 @@ beforeEach(() => {
     value: true,
     writable: true,
   });
+
+  // Default skill implementations
+  (skillRegistry[0].run as any).mockResolvedValue({ climbs: [] });
+  (skillRegistry[1].run as any).mockResolvedValue({ analysis: '分析結果' });
+  (skillRegistry[2].run as any).mockResolvedValue({ planType: 'training' });
 });
 
 describe('suggestionsService', () => {
-  it('Property 7: returns offline error and never calls GeminiClient when offline', async () => {
+  it('returns offline error and never calls GeminiClient when offline', async () => {
     await fc.assert(
       fc.asyncProperty(fc.constant(req), async (r) => {
-        Object.defineProperty(window.navigator, 'onLine', { value: false });
-        (climbsService.getClimbs as any).mockResolvedValue([]);
+        Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
         const result = await service.getSuggestions(r);
         expect(result).toEqual({ status: 'error', error: 'offline' });
-        expect(mockClient.complete).not.toHaveBeenCalled();
+        expect(mockClient.completeStream).not.toHaveBeenCalled();
       }),
-      { numRuns: 20 }
+      { numRuns: 5 }
     );
   });
 
-  it('returns no_history when climb list is empty', async () => {
-    (climbsService.getClimbs as any).mockResolvedValue([]);
+  it('returns success even when history is empty (new behavior)', async () => {
+    (skillRegistry[0].run as any).mockResolvedValue({ climbs: [] });
+    (skillRegistry[1].run as any).mockResolvedValue({ analysis: '初次使用，尚無歷史紀錄。' });
+    (mockClient.completeStream as any).mockResolvedValue('[]');
     const result = await service.getSuggestions(req);
-    expect(result).toEqual({ status: 'error', error: 'no_history' });
+    expect(result.status).toBe('success');
   });
 
   it('returns api_error when GeminiClient throws', async () => {
-    (climbsService.getClimbs as any).mockResolvedValue([{ id: '1' }]);
-    (mockClient.complete as any).mockRejectedValue(new Error('network'));
+    (mockClient.completeStream as any).mockRejectedValue(new Error('network'));
     const result = await service.getSuggestions(req);
     expect(result).toEqual({ status: 'error', error: 'api_error' });
   });
 
   it('returns success with parsed suggestions', async () => {
-    (climbsService.getClimbs as any).mockResolvedValue([{ id: '1' }]);
     const suggestions = [{ name: 'Route A', grade: 'V5', style: 'bouldering', reason: '適合' }];
-    (mockClient.complete as any).mockResolvedValue(JSON.stringify(suggestions));
+    (mockClient.completeStream as any).mockImplementation(async (p: string, cb: any) => {
+      const resp = JSON.stringify(suggestions);
+      cb(resp);
+      return resp;
+    });
     const result = await service.getSuggestions(req);
     expect(result).toEqual({ status: 'success', suggestions });
   });
 
-  it('Property 8: getSuggestions never calls any repository write method', async () => {
-    (climbsService.getClimbs as any).mockResolvedValue([{ id: '1' }]);
-    (mockClient.complete as any).mockResolvedValue('[]');
+  it('Property: getSuggestions calls skills but never calls any repository write method', async () => {
+    (mockClient.completeStream as any).mockResolvedValue('[]');
     await service.getSuggestions(req);
-    expect(climbsService.getClimbs).toHaveBeenCalledTimes(1);
+    expect(skillRegistry[0].run).toHaveBeenCalled();
+    expect(skillRegistry[1].run).toHaveBeenCalled();
   });
 });

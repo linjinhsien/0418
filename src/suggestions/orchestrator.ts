@@ -55,11 +55,11 @@ import { SuggestionIntent } from './suggestionsService';
 export function buildPlan(intent: SuggestionIntent): string[] {
   switch (intent) {
     case 'weakness':
-      return ['feloSearch', 'weaknessAnalysis'];
+      return ['fetchHistory', 'analyzeWeakness'];
     case 'training_plan':
-      return ['feloSearch', 'trainingPlan'];
+      return ['fetchHistory', 'analyzeWeakness', 'trainingPlan'];
     case 'general':
     default:
-      return ['feloSearch', 'routeSuggestions'];
+      return ['fetchHistory', 'analyzeWeakness'];
   }
 }
