@@ -32,7 +32,7 @@ Data is persisted in **Firebase Firestore** (project: `solar-curve-490711-p4`).
 |---|---|
 | Language | TypeScript 5.x (strict mode) |
 | Framework | React 18 + Vite 5 |
-| AI | `@google/generative-ai` — Gemini 3.0 Flash (`gemini-2.5-flash`) |
+| AI | `@google/generative-ai` — Gemini 3.0 Flash (`gemini-2.5-flash-lite`) |
 | AI Orchestration | Semantic Kernel + AgentDevelopKit |
 | AI Backend | `@firebase/vertexai` — Vertex AI for Firebase |
 | Database | Firebase Firestore |
