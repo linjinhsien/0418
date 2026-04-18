@@ -24,7 +24,6 @@ Auto-generated from feature plans. Last updated: 2026-04-18T10:00:00+08:00
 | Language | TypeScript | 5.x (strict mode) |
 | Frontend | React + Vite | 18.x |
 | AI | @google/generative-ai | gemini-2.0-flash (Gemini 3.0 Flash) |
-| AI Backend | @firebase/vertexai | Vertex AI for Firebase |
 | Backend / DB | Firebase Firestore | — |
 | Maps | @vis.gl/react-google-maps | ^1.8.3 |
 | Orchestration | Semantic Kernel / AgentDevelopKit | — |

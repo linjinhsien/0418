@@ -14,7 +14,6 @@
 | 語言 | TypeScript 5.x | 資料模型型別安全 |
 | 框架 | **React** (Vite) | 現代化 Web 應用程式 |
 | AI | **Gemini 3.0 (Flash)** | 官方 SDK (@google/generative-ai) |
-| AI 後端 | **@firebase/vertexai** | Vertex AI for Firebase |
 | 協作 | **Semantic Kernel / AgentDevelopKit** | AI 邏輯協調與編排 |
 | 後端 | **GCP Firestore** | Firebase 託管 NoSQL 資料庫 |
 | 地圖 | **@vis.gl/react-google-maps** | Google Maps + Places API (New) |
