@@ -202,6 +202,27 @@ Spec source of truth: `specs/001-climber-app/`
 | 2026-04-17 | Full migration Expo → React Web + Vite; Phase 1–6 all complete; Firebase, Gemini, Maps integrated; 27 tests passing; fixed `npm run dev`; killed stale servers; renamed codex → `.coder`; speckit.implement ran; Issues #2/#3/#4 fixed |
 | 2026-04-18 | Places API (New) upgrade, Semantic Kernel orchestrator, streaming UX, locationId persistence; Playwright installed; new branch created; daily reports generated |
 
+### Speckit Command Execution Log
+
+所有 speckit 指令執行記錄（跨 Gemini CLI + Kiro CLI）：
+
+| Date (UTC+8) | Agent | Command | 說明 |
+|---|---|---|---|
+| 04-14 | kiro | `speckit.specify` | 初始化 climber-app spec、plan、frontend prototype |
+| 04-14 | kiro | `speckit.specify` | 精簡 spec/plan，套用 #zhtw 規範，確定技術棧 |
+| 04-15 | kiro | `speckit.specify` | Spec 完整性精煉（PR #4、#5） |
+| 04-16 | gemini | `speckit.specify` | `specify agent gemini` — Gemini agent 規格制定 |
+| 04-16 | kiro | `speckit.plan` | 新增 speckit.plan 文件 |
+| 04-17 | gemini | `speckit.analyze` | 規格分析報告（spec/plan/tasks 一致性檢查） |
+| 04-17 | gemini | `speckit.tasks` | 重新生成符合 Vite + React + Firestore 架構的 tasks.md |
+| 04-17 | gemini | `speckit.implement` | Phase 2 基礎建設（gradeUtils、firebase、db、i18n） |
+| 04-17 | gemini | `speckit.implement` | T002 安裝核心相依套件（felo-search config） |
+| 04-17 | gemini | `speckit.taskstoissues` | AI 功能按鈕、Google Maps、搜尋 → Issues #2/#3/#4 |
+| 04-17 | kiro | `speckit.implement` | Phase 1–6 全部執行完成 |
+| 04-18 | gemini | `speckit.specify` | Places API (New) 升級，建立 fix branch + merge |
+| 04-18 | kiro | `speckit.checklist` | Run 2 需求品質檢查清單（CHK001–CHK026） |
+| 04-18 | kiro | `speckit.analyze` | 跨 spec/plan/tasks 一致性分析（A1–A10） |
+
 ### Unified Activity Log (Git + Gemini CLI + Kiro CLI — UTC+8)
 
 | Time (UTC+8) | Source | Activity |
