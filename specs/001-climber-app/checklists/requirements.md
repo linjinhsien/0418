@@ -108,3 +108,86 @@ Legend: ✅ Pass · ⚠️ Warning · ❌ Fail · 🔲 Not checked
 8. **⚠️ gradeWarning display**: Add FR or SC requiring the UI to surface grade warnings to the user.
 9. **⚠️ Authentication assumption**: Resolve "無帳號系統（或使用 Google Auth）" — pick one for v1.
 10. **⚠️ i18n FR**: Add FR-009 mandating zh-TW as the default locale.
+
+---
+
+# Requirements Quality Checklist — Climber App (Run 2)
+
+**Focus**: 全面需求品質（完整性、清晰度、一致性、可量測性、覆蓋率）
+**Depth**: Standard
+**Scope**: `specs/001-climber-app/` artifacts
+**Generated**: 2026-04-18
+**Status**: Post-implementation gate（對照已實作狀態重新驗證）
+
+---
+
+## Requirement Completeness
+
+- [x] CHK001 - spec.md 中是否明確列出所有 FR（FR-001～FR-008）且無遺漏？ [Completeness, Spec §FR] ✅ FR-008（離線 banner）已補入
+- [x] CHK002 - AISuggestion session-only 不持久化的限制是否已寫入 spec.md？ [Completeness] ✅ 已補入核心資料實體章節
+- [x] CHK003 - 攀岩記錄的編輯／刪除是否明確標示為 v1 out of scope？ [Completeness] ✅ 假設章節已明確說明
+- [ ] CHK004 - i18n（zh-TW 預設語系）是否有對應的 FR 或 SC？ [Completeness, Gap] ⚠️ 仍無 FR-009
+- [x] CHK005 - UserProfile singleton 限制是否在 spec.md 假設章節中說明？ [Completeness] ✅ 已補入
+
+## Requirement Clarity
+
+- [x] CHK006 - SC-003 網路條件是否已量化（≥10Mbps / latency ≤100ms）？ [Clarity, Spec §SC-003] ✅ 已修正
+- [x] CHK007 - SC-004 可用性量測方式是否已定義（5 位參與者非引導式測試）？ [Clarity, Spec §SC-004] ✅ 已補入
+- [ ] CHK008 - FR-006「友善錯誤訊息」是否定義了最低內容規格（錯誤類型 + 重試 CTA）？ [Clarity, Gap] ❌ 仍未定義
+- [x] CHK009 - SC-005 WCAG 2.1 AA 是否明確列出適用元件（正文、按鈕、輸入框標籤）？ [Clarity, Spec §SC-005] ✅ 已補入
+- [ ] CHK010 - 「gradeWarning: true」的 UI 呈現方式是否在 spec 中定義？ [Clarity, Gap] ⚠️ 僅在 data-model.md 定義，spec.md 無對應 FR
+
+## Requirement Consistency
+
+- [x] CHK011 - FR-004 Gemini 模型名稱（gemini-2.0-flash）是否與 AGENTS.md、geminiClient.ts 一致？ [Consistency] ✅
+- [x] CHK012 - spec.md 與 data-model.md 的難度格式（V-scale / YDS）定義是否一致？ [Consistency] ✅
+- [ ] CHK013 - spec.md 假設章節「無帳號系統」是否已移除「或使用 Google Auth」的歧義？ [Consistency, Ambiguity] ⚠️ 仍有歧義
+
+## Acceptance Criteria Quality
+
+- [x] CHK014 - US1 驗收情境是否涵蓋正向、負向（驗證失敗）兩種路徑？ [Acceptance Criteria] ✅
+- [ ] CHK015 - US2 是否有圖表渲染失敗的錯誤情境？ [Acceptance Criteria, Gap] ❌ 無
+- [x] CHK016 - US3 是否有 API 失敗的錯誤情境（含重試）？ [Acceptance Criteria] ✅
+- [ ] CHK017 - FR-007 是否有「資料在頁面重載後仍存在」的驗收情境？ [Acceptance Criteria, Gap] ⚠️ 無
+
+## Scenario Coverage
+
+- [x] CHK018 - 離線狀態（FR-008）是否有對應的驗收情境？ [Coverage] ✅ FR-008 已定義 offline banner 行為
+- [ ] CHK019 - 無歷史資料時請求 AI 建議的引導流程是否有對應 FR 或情境？ [Coverage, Gap] ⚠️ data-model.md 有 no_history 錯誤類型，但 spec.md 無 FR
+- [x] CHK020 - 空狀態（無記錄）的儀表板顯示是否有驗收情境？ [Coverage, Spec §US2] ✅
+
+## Non-Functional Requirements
+
+- [x] CHK021 - 效能需求（SC-002、SC-003）是否已量化且可客觀量測？ [NFR, Measurability] ✅
+- [x] CHK022 - 無障礙需求（SC-005）是否符合 WCAG 2.1 AA 且列出適用元件？ [NFR] ✅
+- [ ] CHK023 - 是否有安全性需求說明（API key 保護、Firestore rules）？ [NFR, Gap] ⚠️ 僅在 AGENTS.md 提及，spec.md 無對應 FR 或 SC
+
+## Dependencies & Assumptions
+
+- [x] CHK024 - Gemini API key 來源（VITE_GEMINI_API_KEY / .env.local）是否在假設章節說明？ [Assumption] ✅
+- [x] CHK025 - Firebase Firestore 專案（solar-curve-490711-p4）是否在 shared/firebase.ts 設定且文件化？ [Dependency] ✅
+- [ ] CHK026 - Google Maps API key（VITE_GOOGLE_MAPS_API_KEY）是否在 spec.md 假設章節列出？ [Dependency, Gap] ⚠️ 僅在 AGENTS.md 列出
+
+---
+
+## Run 2 Summary
+
+| Category | ✅ Pass | ⚠️ Warning | ❌ Fail |
+|----------|---------|-----------|--------|
+| Completeness | 4 | 1 | 0 |
+| Clarity | 3 | 1 | 1 |
+| Consistency | 2 | 1 | 0 |
+| Acceptance Criteria | 2 | 1 | 1 |
+| Scenario Coverage | 2 | 1 | 0 |
+| NFR | 2 | 1 | 0 |
+| Dependencies | 2 | 1 | 0 |
+| **Total** | **17** | **7** | **2** |
+
+## Run 2 Recommended Actions
+
+1. **❌ CHK008** — FR-006 補充錯誤訊息最低內容規格（錯誤類型說明 + 重試 CTA）
+2. **❌ CHK015** — US2 補充圖表渲染失敗的錯誤驗收情境
+3. **⚠️ CHK004** — 新增 FR-009：zh-TW 為預設語系
+4. **⚠️ CHK013** — 移除假設章節「或使用 Google Auth」歧義，明確為「無帳號系統」
+5. **⚠️ CHK019** — 補充 no_history 情境的 FR 或驗收情境
+6. **⚠️ CHK026** — 在 spec.md 假設章節補充 VITE_GOOGLE_MAPS_API_KEY
