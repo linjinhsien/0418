@@ -5,9 +5,9 @@
 **描述**: 
 - 加入「分析弱點」與「四週計畫」功能按鈕。
 - 根據意圖動態觸發 Felo Search 獲取不同領域的 Context。
-- **TODO**: 整合 `ClimbList` 數據至「分析弱點」的 Prompt 中，實現數據驅動的建議。
+- **TODO**: 整合 `ClimbList` 資料至「分析弱點」的 Prompt 中，實現資料驅動的建議。
 
-## [Issue #2] 升級地點存儲與地圖視覺化
+## [Issue #2] 升級地點儲存與地圖視覺化
 **狀態**: ✅ 已完成。
 **描述**: 
 - 修正 `db.ts` 中 `FirestoreDB` 與 `LocalDB` 的 INSERT 參數映射，確保 `locationId`（index 7）被正確持久化。
