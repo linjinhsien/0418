@@ -27,8 +27,50 @@ Data is persisted in **Firebase Firestore** (project: `solar-curve-490711-p4`).
 
 ---
 02-06  branch 是kiro-cli 用speckit 生的 但是有一些動作他漏掉了 。後來用程式補回去。
-中間有用 kiro 的ide 重新設計一次，在.kiro 裡面的 spec ,後來 npm run dev run 不起來 有用anti-gravity 改成用vite, 規格過多導致容易產生混亂，所以有清洗一次。 api key 來自不同專案或其他 易生混亂。 所以後來地圖的有enable Map JavaScript API places API new 跟 cloud firestore API vertex API 等。
+中間有用 kiro 的ide 重新設計一次，在.kiro 裡面的 spec ,後來 npm run dev run 不起來 有用anti-gravity 改成用vite, 規格過多導致容易產生混亂，所以有清洗一次。 api key 來自不同專案或其他 易生混亂。 所以後來地圖的有enable Map JavaScript API places API new 跟 cloud firestore API vertex API 等。主要用google cloudshell 跑 我有裝 kiro-cli在它裡面。第一個月送500點，主要是sonnet-4.5。
+felo-search skill 配置在全域 的skill 但是 api-key 配置在 local .env  ，我有用felo-search 去搜尋再叫gemini 改。
+<img width="1863" height="722" alt="image" src="https://github.com/user-attachments/assets/f41280ac-936f-4d01-917a-fbacaecfdfa7" />
+<img width="854" height="1917" alt="image" src="https://github.com/user-attachments/assets/d10a3821-4e5a-4132-85f7-a9ed7022b6c7" />
 
+##
+1. 執行摘要 (Executive Summary)
+本次任務旨在透過技術手段查詢「長榮海運模擬機」的相關資訊。過程中排除了 API 認證環境設定障礙，並成功利用 Felo Search 獲取長榮海運在船舶模擬訓練系統上的技術應用與產學合作概況。
+
+2. 6W2H 分析
+What (做什麼)：使用 Felo Search 搜尋並整理「長榮海運模擬機」相關資訊。
+Why (為什麼)：了解長榮海運在航海人員培訓與模擬系統的技術布局。
+Who (誰做)：使用者 (操作執行)、Gemini (AI 輔助工具)。
+How (怎麼做)：透過 Cloud Shell 執行 felo-search 指令，並處理 API 環境變數設定。
+When (何時)：2026年4月18日。
+Where (在哪裡)：Cloud Shell 環境。
+
+3. 重點整理 (Key Highlights)
+長榮海運模擬機系統具備以下關鍵特色與目標：
+
+全功能操船模擬機：
+
+符合 DNV A 級標準，具備 360 度環場影像與立體音效。
+配備雷達與自動測繪 (ARPA)、電子海圖 (ECDIS)，模擬多種航行條件與船舶環境，提升人員技術與團隊合作。
+全功能輪機模擬機：
+具備複雜引擎操作設計，可訓練學員執行系統操作、異常判斷與故障排除。
+創新技術與產學合作：
+與三星重工 (Samsung HI) 合作開發新型模擬器，針對雙燃料甲醇動力船進行訓練。
+與 WinGD 合作，將虛擬實境 (VR) 技術導入，提升模擬真實感。
+提供模擬規格給多所海事院校（如海大、高科大等），致力培育專業航運人才。
+
+訓練目的：
+
+核心目標為提升航行安全意識、增強學員面對突發事件的壓力處理能力。
+4. URL 一覽
+長榮海運訓練中心設備介紹：
+https://www.evergreen-marine.com/emc/trainingcenter/jsp/EMC_TrainingCenterIntro.jsp?lang=zh-tw
+
+長榮與三星重工開發甲醇動力模擬器：
+https://container-news.com/evergreen-and-samsung-hi-develop-training-simulator-for-methanol-powered-ships/
+
+長榮海運與 WinGD 攜手建置海事模擬教學設施：
+https://tw.news.yahoo.com/wingd-%E6%94%9C%E6%89%8B%E9%95%B7%E6%A6%AE%E6%B5%B7%E9%81%8B-%E5%BB%BA%E7%BD%AE%E6%98%A0%E5%83%8F%E6%8A%80%E8%A1%93%E6%B5%B7%E4%BA%8B%E6%A8%A1%E6%93%AC%E6%95%99%E5%AD%B8%E8%A8%AD%E6%96%BD-114321084.html
+##
 ## Tech Stack
 
 | Category | Technology |
